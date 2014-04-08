@@ -28,13 +28,14 @@
     <script src="lib/d3.min.js"></script>
     <script src="js/viz.js"></script>
     <script>
-      d3.json("data/investments.json", function (error, data) {
-        VIZ.drawElements(data);
+      d3.json("data/religions.json", function (error, data) {
+        console.log(data);
+        /*VIZ.drawElements(data);
         VIZ.transform('helix');
         d3.select("#loading").remove();
         VIZ.render();
         VIZ.animate();
-        window.addEventListener('resize', VIZ.onWindowResize, false);
+        */window.addEventListener('resize', VIZ.onWindowResize, false);
       });
     </script>
   </body>
