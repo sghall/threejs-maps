@@ -57,6 +57,65 @@
 
         var leafletMap = L.mapbox.map('mapContainer', 'delimited.ho6391dg')
             .setView([33, 0], 2);
+
+      var featureLayer = L.geoJson(data,  {
+            style: getStyle,
+            onEachFeature: onEachFeature
+        }).addTo(leafletMap);
+
+      /*
+      var featureLayer = L.mapbox.featureLayer(data)
+          .setFilter(function() { return true; })
+          .setStyle(style)
+          .addTo(leafletMap);
+
+*/
+
+      function getStyle (feature) {
+        console.log("feature", feature);
+        return {
+            fillColor: feature.properties.data ? "#E3CF57": "#00C957",
+            weight: 1,
+            opacity: 1,
+            color: 'blue',
+            dashArray: '3',
+            fillOpacity: .6
+        };
+      }
+
+      function onEachFeature (feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: mouseout,
+            click: zoomToFeature
+        });
+      }
+
+      function highlightFeature (e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 2,
+            color: 'grey',
+            dashArray: '',
+            fillOpacity: 0.3
+        });
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+      }
+
+      function mouseout(e) {
+          featureLayer.resetStyle(e.target);
+      }
+
+      function zoomToFeature(e) {
+          leafletMap.fitBounds(e.target.getBounds());
+      }
+
+
+        window.mapper = featureLayer;
+        console.log(featureLayer);
         /*VIZ.drawElements(data);
         VIZ.transform('helix');
         d3.select("#loading").remove();
