@@ -3,13 +3,36 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <title>delimited | Three.js Maps</title>
+    <style>
+      text {
+        fill: white;
+      }
+      #mapContainer {
+        margin: 100px;
+        background-color: #333;
+        width: 80%;
+        height: 500px;
+      }
+      #tooltip {
+        opacity: .9;
+        background: #333;
+        padding: 5px;
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    </style>
   </head>
   <body>
     <div id="intro">
       <h3>D3 Maps in Three.js</h3>
-      <p>Interactive Maps with Click Events</p>
     </div>
     <div id="loading">
       <h5>Loading...</h5>
@@ -21,6 +44,7 @@
       <img src="css/img/pinch.png">
       <img src="css/img/triple.png">
     </div>
+    <div id="mapContainer"></div>
     <script src="lib/three.min.js"></script>
     <script src="lib/tween.js"></script>
     <script src="lib/CSS3DRenderer.js"></script>
@@ -30,6 +54,9 @@
     <script>
       d3.json("data/religions.json", function (error, data) {
         console.log(data);
+
+        var leafletMap = L.mapbox.map('mapContainer', 'delimited.ho6391dg')
+            .setView([33, 0], 2);
         /*VIZ.drawElements(data);
         VIZ.transform('helix');
         d3.select("#loading").remove();
