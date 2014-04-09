@@ -53,15 +53,18 @@
     <script src="js/viz.js"></script>
     <script>
       d3.json("data/religions.json", function (error, data) {
-        console.log(data);
+
+        var mouse11 = getMouseOut(featureLayer);
+
+        console.log(getMouseOut(featureLayer));
 
         var leafletMap = L.mapbox.map('mapContainer', 'delimited.ho6391dg')
             .setView([33, 0], 2);
 
-      var featureLayer = L.geoJson(data,  {
-            style: getStyle,
-            onEachFeature: onEachFeature
-        }).addTo(leafletMap);
+        var featureLayer = L.geoJson(data,  {
+              style: getStyle('year2010','chrstgenpct'),
+              onEachFeature: onEachFeature
+          }).addTo(leafletMap);
 
       /*
       var featureLayer = L.mapbox.featureLayer(data)
@@ -71,41 +74,83 @@
 
 */
 
-      function getStyle (feature) {
-        console.log("feature", feature);
-        return {
-            fillColor: feature.properties.data ? "#E3CF57": "#00C957",
-            weight: 1,
-            opacity: 1,
-            color: 'blue',
-            dashArray: '3',
-            fillOpacity: .6
-        };
+      function colors (d) {
+        return d >= 0.9 ? '#703f29' :
+               d >= 0.8 ? '#955436' :
+               d >= 0.7 ? '#b05e32' :
+               d >= 0.6 ? '#d56c2a' :
+               d >= 0.5 ? '#ea8435' :
+               d >= 0.4 ? '#f89e5d' :
+               d >= 0.3 ? '#fbb885' :
+               d >= 0.2 ? '#fdd3b1' :
+               d >= 0.1 ? '#fee6d3' :
+               d  > 0.0 ? '#fff3ea' :
+                          '#8b8682';
       }
 
-      function onEachFeature (feature, layer) {
+      function getColor (data, year, relig) {
+        var hex = '#000000';
+        if (data === undefined) {
+          return hex;
+        } else {
+          data.forEach(function (item, i) {
+            if (item.name === year) {
+              hex = colors(item.children[0][relig]);
+            }
+          });
+          return hex;
+        }
+      }
+
+      function getStyle(year, relig) {
+        return function (feature) {
+          var data = feature.properties.data;
+          return {
+            fillColor: getColor(data, year, relig),
+            weight: 1,
+            opacity: 1,
+            color: 'grey',
+            dashArray: '3',
+            fillOpacity: .6
+          };
+        }
+      }
+
+      function onEachFeature(feature, layer) {
         layer.on({
             mouseover: highlightFeature,
-            mouseout: mouseout,
+            mouseout: function (e) {
+              console.log(e);
+              featureLayer.resetStyle(e.target);
+            },
             click: zoomToFeature
         });
       }
 
-      function highlightFeature (e) {
+      function highlightFeature(e) {
         var layer = e.target;
 
         layer.setStyle({
             weight: 2,
-            color: 'grey',
+            color: 'tomato',
             dashArray: '',
-            fillOpacity: 0.3
+            fillOpacity: 0.5
         });
         if (!L.Browser.ie && !L.Browser.opera) {
             layer.bringToFront();
         }
       }
 
+      function getMouseOut(objectLayer) {
+        return function (e) {
+          console.log(layer);
+          objectLayer.resetStyle(e.target);
+        };
+      }
+
+
       function mouseout(e) {
+          console.log(e);
           featureLayer.resetStyle(e.target);
       }
 
