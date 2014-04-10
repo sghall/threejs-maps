@@ -6,7 +6,11 @@
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 3000;
   camera.setLens(30);
-  
+
+  VIZ.render = function () {
+    renderer.render(scene, camera);
+  }
+
   VIZ.transform = function (layout) {
     var duration = 1000;
 
