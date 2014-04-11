@@ -12,7 +12,7 @@
       .mapDiv {
         margin: 100px;
         background-color: #333;
-        width: 700px;
+        width: 800px;
         height: 500px;
       }
       #tooltip {
@@ -44,185 +44,33 @@
     </div>
     <div class="mapDiv" id="map1Container"></div>
     <div class="mapDiv" id="map2Container"></div>
+    <div class="mapDiv" id="map3Container"></div>
+    <div class="mapDiv" id="map4Container"></div>
+    <div class="mapDiv" id="map5Container"></div>
+    <div class="mapDiv" id="map6Container"></div>
+    <div class="mapDiv" id="map7Container"></div>
+    <div class="mapDiv" id="map8Container"></div>
+    <div class="mapDiv" id="map9Container"></div>
+    <div class="mapDiv" id="map0Container"></div>
     <script src="lib/three.min.js"></script>
     <script src="lib/tween.js"></script>
     <script src="lib/CSS3DRenderer.js"></script>
     <script src="lib/d3.min.js"></script>
+    <script src="js/viz.js"></script>
     <script>
       d3.json("data/religions.json", function (error, data) {
-        var yVar = 'year2010', rVar = 'chrstgenpct', cVar = 'map1Container';
 
-        var leafletMap = L.mapbox.map(cVar, 'delimited.ho6391dg')
-            .setView([33, 0], 2);
+      VIZ.drawMap(data, 'year1955', 'chrstgenpct', 'map1Container')
+      VIZ.drawMap(data, 'year1960', 'chrstgenpct', 'map2Container')
+      VIZ.drawMap(data, 'year1970', 'chrstgenpct', 'map3Container')
+      VIZ.drawMap(data, 'year1975', 'chrstgenpct', 'map4Container')
+      VIZ.drawMap(data, 'year2010', 'chrstgenpct', 'map5Container')
+      VIZ.drawMap(data, 'year1955', 'islmgenpct', 'map6Container')
+      VIZ.drawMap(data, 'year1960', 'islmgenpct', 'map7Container')
+      VIZ.drawMap(data, 'year1970', 'islmgenpct', 'map8Container')
+      VIZ.drawMap(data, 'year1975', 'islmgenpct', 'map9Container')
+      VIZ.drawMap(data, 'year2010', 'islmgenpct', 'map0Container')
 
-        var featureLayer = L.geoJson(data,  {
-              style: getStyle(yVar, rVar),
-              onEachFeature: onEachFeature
-          }).addTo(leafletMap);
-
-      function colors (d) {
-        return d >= 0.9 ? '#703f29' :
-               d >= 0.8 ? '#955436' :
-               d >= 0.7 ? '#b05e32' :
-               d >= 0.6 ? '#d56c2a' :
-               d >= 0.5 ? '#ea8435' :
-               d >= 0.4 ? '#f89e5d' :
-               d >= 0.3 ? '#fbb885' :
-               d >= 0.2 ? '#fdd3b1' :
-               d >= 0.1 ? '#fee6d3' :
-               d  > 0.0 ? '#fff3ea' :
-                          '#8b8682';
-      }
-
-      function getColor (data, year, relig) {
-        var hex = '#000000';
-        if (data === undefined) {
-          return hex;
-        } else {
-          data.forEach(function (item, i) {
-            if (item.name === year) {
-              hex = colors(item.children[0][relig]);
-            }
-          });
-          return hex;
-        }
-      }
-
-      function getStyle(year, relig) {
-        return function (feature) {
-          var data = feature.properties.data;
-          return {
-            fillColor: getColor(data, year, relig),
-            weight: 1,
-            opacity: 1,
-            color: 'grey',
-            dashArray: '3',
-            fillOpacity: .6
-          };
-        }
-      }
-
-      function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: function (e) {
-              console.log(e);
-              featureLayer.resetStyle(e.target);
-            },
-            click: zoomToFeature
-        });
-      }
-
-      function highlightFeature(e) {
-        var layer = e.target;
-
-        layer.setStyle({
-            weight: 2,
-            color: 'tomato',
-            dashArray: '',
-            fillOpacity: 0.5
-        });
-        if (!L.Browser.ie && !L.Browser.opera) {
-            layer.bringToFront();
-        }
-      }
-
-      function mouseout(e) {
-          console.log(e);
-          featureLayer.resetStyle(e.target);
-      }
-
-      function zoomToFeature(e) {
-          leafletMap.fitBounds(e.target.getBounds());
-      }
-      });
-
-      d3.json("data/religions.json", function (error, data) {
-        var yVar = 'year1960', rVar = 'chrstgenpct', cVar = 'map2Container';
-
-        var leafletMap = L.mapbox.map(cVar, 'delimited.ho6391dg')
-            .setView([33, 0], 2);
-
-        var featureLayer = L.geoJson(data,  {
-              style: getStyle(yVar, rVar),
-              onEachFeature: onEachFeature
-          }).addTo(leafletMap);
-
-      function colors (d) {
-        return d >= 0.9 ? '#703f29' :
-               d >= 0.8 ? '#955436' :
-               d >= 0.7 ? '#b05e32' :
-               d >= 0.6 ? '#d56c2a' :
-               d >= 0.5 ? '#ea8435' :
-               d >= 0.4 ? '#f89e5d' :
-               d >= 0.3 ? '#fbb885' :
-               d >= 0.2 ? '#fdd3b1' :
-               d >= 0.1 ? '#fee6d3' :
-               d  > 0.0 ? '#fff3ea' :
-                          '#8b8682';
-      }
-
-      function getColor (data, year, relig) {
-        var hex = '#000000';
-        if (data === undefined) {
-          return hex;
-        } else {
-          data.forEach(function (item, i) {
-            if (item.name === year) {
-              hex = colors(item.children[0][relig]);
-            }
-          });
-          return hex;
-        }
-      }
-
-      function getStyle(year, relig) {
-        return function (feature) {
-          var data = feature.properties.data;
-          return {
-            fillColor: getColor(data, year, relig),
-            weight: 1,
-            opacity: 1,
-            color: 'grey',
-            dashArray: '3',
-            fillOpacity: .6
-          };
-        }
-      }
-
-      function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: function (e) {
-              console.log(e);
-              featureLayer.resetStyle(e.target);
-            },
-            click: zoomToFeature
-        });
-      }
-
-      function highlightFeature(e) {
-        var layer = e.target;
-
-        layer.setStyle({
-            weight: 2,
-            color: 'tomato',
-            dashArray: '',
-            fillOpacity: 0.5
-        });
-        if (!L.Browser.ie && !L.Browser.opera) {
-            layer.bringToFront();
-        }
-      }
-
-      function mouseout(e) {
-          console.log(e);
-          featureLayer.resetStyle(e.target);
-      }
-
-      function zoomToFeature(e) {
-          leafletMap.fitBounds(e.target.getBounds());
-      }
       });
     </script>
   </body>
