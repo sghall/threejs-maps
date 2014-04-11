@@ -2,18 +2,33 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
     <title>delimited | Three.js Maps</title>
     <style>
+      .leaflet-control-zoom {
+        margin: 60px;
+      }
+      html, body {
+        height: 100%;
+      }
+
+      body {
+        background-color: #000;
+        margin: 0;
+        /* overflow: hidden; */
+      }
       text {
         fill: white;
       }
       .mapDiv {
-        margin: 100px;
+        border: 5px solid white;
+        position: absolute;
+        margin: 10px;
         background-color: #333;
-        width: 800px;
-        height: 500px;
+        width: 2000px;
+        height: 1200px;
       }
       #tooltip {
         opacity: .9;
@@ -42,24 +57,75 @@
       <img src="css/img/pinch.png">
       <img src="css/img/triple.png">
     </div>
-    <div class="mapDiv" id="map1Container"></div>
-    <div class="mapDiv" id="map2Container"></div>
-    <div class="mapDiv" id="map3Container"></div>
-    <div class="mapDiv" id="map4Container"></div>
-    <div class="mapDiv" id="map5Container"></div>
-    <div class="mapDiv" id="map6Container"></div>
-    <div class="mapDiv" id="map7Container"></div>
-    <div class="mapDiv" id="map8Container"></div>
-    <div class="mapDiv" id="map9Container"></div>
-    <div class="mapDiv" id="map0Container"></div>
     <script src="lib/three.min.js"></script>
     <script src="lib/tween.js"></script>
     <script src="lib/CSS3DRenderer.js"></script>
+    <script src="lib/TrackballControls.js"></script>
     <script src="lib/d3.min.js"></script>
     <script src="js/viz.js"></script>
     <script>
       d3.json("data/religions.json", function (error, data) {
 
+        var items = [
+          {
+            year: 'year1955',
+            relg: 'chrstgenpct',
+            elem: 'relgMap0'
+          },
+          {
+            year: 'year1960',
+            relg: 'chrstgenpct',
+            elem: 'relgMap1'
+          },
+          {
+            year: 'year1970',
+            relg: 'chrstgenpct',
+            elem: 'relgMap2'
+          },
+          {
+            year: 'year1975',
+            relg: 'chrstgenpct',
+            elem: 'relgMap3'
+          },
+          {
+            year: 'year1980',
+            relg: 'chrstgenpct',
+            elem: 'relgMap4'
+          },
+          {
+            year: 'year1985',
+            relg: 'chrstgenpct',
+            elem: 'relgMap5'
+          },
+          {
+            year: 'year1990',
+            relg: 'chrstgenpct',
+            elem: 'relgMap6'
+          },
+          {
+            year: 'year1995',
+            relg: 'chrstgenpct',
+            elem: 'relgMap7'
+          },
+          {
+            year: 'year2000',
+            relg: 'chrstgenpct',
+            elem: 'relgMap8'
+          },
+          {
+            year: 'year2005',
+            relg: 'chrstgenpct',
+            elem: 'relgMap9'
+          }
+        ];
+
+      VIZ.createMaps(items, data);
+      VIZ.transform('helix');
+      d3.select("#loading").remove();
+      VIZ.render();
+      VIZ.animate();
+      window.addEventListener('resize', VIZ.onWindowResize, false);
+      /*
       VIZ.drawMap(data, 'year1955', 'chrstgenpct', 'map1Container')
       VIZ.drawMap(data, 'year1960', 'chrstgenpct', 'map2Container')
       VIZ.drawMap(data, 'year1970', 'chrstgenpct', 'map3Container')
@@ -70,7 +136,7 @@
       VIZ.drawMap(data, 'year1970', 'islmgenpct', 'map8Container')
       VIZ.drawMap(data, 'year1975', 'islmgenpct', 'map9Container')
       VIZ.drawMap(data, 'year2010', 'islmgenpct', 'map0Container')
-
+      */
       });
     </script>
   </body>

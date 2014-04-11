@@ -7,92 +7,172 @@
   camera.position.z = 3000;
   camera.setLens(30);
 
-  VIZ.drawMap = function (data, yVar, rVar, cVar) {
-    var leafletMap = L.mapbox.map(cVar, 'delimited.ho6391dg')
-          .setView([33, 0], 2);
+  VIZ.createMaps = function (list, data) {
 
-    var geoLayer = L.geoJson(data, {
-            style: getStyle(yVar, rVar),
-            onEachFeature: onEachFeature
-          }).addTo(leafletMap);
+    VIZ.count = data.length;
 
-    function colors (d) {
-      return d >= 0.9 ? '#703f29' :
-             d >= 0.8 ? '#955436' :
-             d >= 0.7 ? '#b05e32' :
-             d >= 0.6 ? '#d56c2a' :
-             d >= 0.5 ? '#ea8435' :
-             d >= 0.4 ? '#f89e5d' :
-             d >= 0.3 ? '#fbb885' :
-             d >= 0.2 ? '#fdd3b1' :
-             d >= 0.1 ? '#fee6d3' :
-             d  > 0.0 ? '#fff3ea' :
-                        '#8b8682';
-    }
-
-    function getColor (data, year, relig) {
-      var hex = '#000000';
-      if (data === undefined) {
-        return hex;
-      } else {
-        data.forEach(function (item, i) {
-          if (item.name === year) {
-            hex = colors(item.children[0][relig]);
-          }
+    var MAPS = d3.selectAll('.mapDiv')
+      .data(list).enter()
+      .append("div")
+        .attr("class", "mapDiv")
+        .attr("id", function (d) { console.log(d); return d.elem; })
+        .each(function (d) {
+          VIZ.drawMap(data, d.year, d.relg, d.elem);
         });
-        return hex;
-      }
-    }
+      
+    MAPS.each(setData);
+    MAPS.each(objectify);
 
-    function getStyle(year, relig) {
-      return function (feature) {
-        var data = feature.properties.data;
-        return {
-          fillColor: getColor(data, year, relig),
-          weight: 1,
-          opacity: 1,
-          color: 'grey',
-          dashArray: '3',
-          fillOpacity: .6
-        };
-      }
-    }
+    // REMOVE TRANSFORMS FROM LEAFLET PANE
+    d3.selectAll(".leaflet-map-pane").style("-webkit-transform", "none")
 
-    function onEachFeature(feature, layer) {
-      layer.on({
-          mouseover: highlightFeature,
-          mouseout: mouseout
-      });
-    }
 
-    function highlightFeature(e) {
-      var layer = e.target;
-      layer.setStyle({
-          weight: 2,
-          color: 'tomato',
-          dashArray: '',
-          fillOpacity: 0.5
-      });
-      if (!L.Browser.ie && !L.Browser.opera) {
-          layer.bringToFront();
-      }
-    }
-
-    function mouseout(e) {
-      var layer = e.target;
-      layer.setStyle({
-          weight: 2,
-          color: 'grey',
-          dashArray: '3',
-          fillOpacity: 0.6
-      });
-      if (!L.Browser.ie && !L.Browser.opera) {
-          layer.bringToFront();
-      }
-    } 
+    console.log(scene)
   }
 
+  VIZ.drawMap = function (data, year, relig, elemID) {
+    var leafletMap = L.mapbox.map(elemID, 'delimited.ho6391dg',{zoomControl: true, tileLayer:{noWrap: true}})
+      .setView([33, 0], 3);
 
+    leafletMap.dragging.disable();
+    leafletMap.touchZoom.disable();
+    leafletMap.doubleClickZoom.disable();
+    leafletMap.scrollWheelZoom.disable();
+
+    var geoLayer = L.geoJson(data, {
+      style: getStyle(year, relig),
+      onEachFeature: onEachFeature
+    }).addTo(leafletMap);
+  }
+
+  function objectify(d) {
+    var object = new THREE.CSS3DObject(this);
+    object.position = d.random.position;
+    scene.add(object);
+  }
+
+  function setData(d, i) {
+    var vector, phi, theta;
+
+    var random = new THREE.Object3D();
+    random.position.x = Math.random() * 4000 - 2000;
+    random.position.y = Math.random() * 4000 - 2000;
+    random.position.z = Math.random() * 4000 - 2000;
+    d['random'] = random;
+
+    var sphere = new THREE.Object3D();
+    vector = new THREE.Vector3();
+    phi = Math.acos(-1 + ( 2 * i ) / (VIZ.count - 1));
+    theta = Math.sqrt((VIZ.count - 1) * Math.PI) * phi;
+    sphere.position.x = 8000 * Math.cos(theta) * Math.sin(phi);
+    sphere.position.y = 8000 * Math.sin(theta) * Math.sin(phi);
+    sphere.position.z = 8000 * Math.cos(phi);
+    vector.copy(sphere.position).multiplyScalar(2);
+    sphere.lookAt(vector);
+    d['sphere'] = sphere;
+
+    var helix = new THREE.Object3D();
+    vector = new THREE.Vector3();
+    phi = i * 0.250 + Math.PI;
+    helix.position.x = 4000 * Math.sin(phi);
+    helix.position.y = - i + 2000;
+    helix.position.z = 4000 * Math.cos(phi);
+    vector.x = helix.position.x * 2;
+    vector.y = helix.position.y;
+    vector.z = helix.position.z * 2;
+    helix.lookAt(vector);
+    d['helix'] = helix;
+
+    var grid = new THREE.Object3D();
+    grid.position.x = (( i % 5 ) * 400) - 800;
+    grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+    grid.position.z = (Math.floor( i / 25 )) * 1000 - 2000;
+    d['grid'] = grid;
+
+    d3.select(this).datum(d);
+  }
+
+  function colors (d) {
+    return d >= 0.9 ? '#703f29' :
+           d >= 0.8 ? '#955436' :
+           d >= 0.7 ? '#b05e32' :
+           d >= 0.6 ? '#d56c2a' :
+           d >= 0.5 ? '#ea8435' :
+           d >= 0.4 ? '#f89e5d' :
+           d >= 0.3 ? '#fbb885' :
+           d >= 0.2 ? '#fdd3b1' :
+           d >= 0.1 ? '#fee6d3' :
+           d  > 0.0 ? '#fff3ea' :
+                      '#8b8682';
+  }
+
+  function getColor (data, year, relig) {
+    var hex = '#000000';
+    if (data === undefined) {
+      return hex;
+    } else {
+      data.forEach(function (item, i) {
+        if (item.name === year) {
+          hex = colors(item.children[0][relig]);
+        }
+      });
+      return hex;
+    }
+  }
+
+  function getStyle(year, relig) {
+    return function (feature) {
+      var data = feature.properties.data;
+      return {
+        fillColor: getColor(data, year, relig),
+        weight: 1,
+        opacity: 1,
+        color: 'grey',
+        dashArray: '3',
+        fillOpacity: 0.6
+      };
+    }
+  }
+
+  function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: mouseover,
+        mouseout: mouseout
+    });
+  }
+
+  function mouseover(e) {
+    var layer = e.target;
+    layer.setStyle({
+        weight: 2,
+        color: 'tomato',
+        dashArray: '',
+        fillOpacity: 0.5
+    });
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+    }
+  }
+
+  function mouseout(e) {
+    var layer = e.target;
+    layer.setStyle({
+        weight: 1,
+        opacity: 1,
+        color: 'grey',
+        dashArray: '3',
+        fillOpacity: 0.6
+    });
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+    }
+  }
+
+  d3.select("#menu").selectAll('button')
+    .data(['sphere', 'helix', 'grid']).enter()
+      .append('button')
+      .html(function (d) { return d; })
+      .on('click', function (d) { VIZ.transform(d); })
 
   VIZ.render = function () {
     renderer.render(scene, camera);
@@ -133,13 +213,13 @@
   renderer.setSize(width, height);
   renderer.domElement.style.position = 'absolute';
   document.getElementById('container').appendChild(renderer.domElement);
-/*
+
   controls = new THREE.TrackballControls(camera, renderer.domElement);
   controls.rotateSpeed = 0.5;
   controls.minDistance = 100;
   controls.maxDistance = 6000;
   controls.addEventListener('change', VIZ.render);
-*/
+
   VIZ.onWindowResize = function () {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
