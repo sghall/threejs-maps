@@ -31,7 +31,6 @@
     <script>
       d3.json("data/religions.json", function (error, data) {
 
-
         var items = [
           {
             year: 'year1955',
@@ -85,30 +84,6 @@
           }
         ];
 
-/*
-        var items = [
-          {
-            year: 'year1955',
-            relg: 'chrstgenpct',
-            elem: 'relgMap0'
-          },
-          {
-            year: 'year1960',
-            relg: 'chrstgenpct',
-            elem: 'relgMap1'
-          },
-          {
-            year: 'year1970',
-            relg: 'chrstgenpct',
-            elem: 'relgMap2'
-          },
-          {
-            year: 'year1975',
-            relg: 'chrstgenpct',
-            elem: 'relgMap3'
-          }
-        ];
-*/
       VIZ.createMaps(items, data);
       VIZ.transform('grid');
       d3.select("#loading").remove();
