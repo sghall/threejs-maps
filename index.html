@@ -2,44 +2,38 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
     <title>delimited | Three.js Maps</title>
     <style>
-      .leaflet-control-zoom {
-        margin: 60px;
-      }
-      html, body {
-        height: 100%;
-      }
-
-      body {
+      body { 
+        margin:0; 
+        padding:0; 
         background-color: #000;
-        margin: 0;
-        /* overflow: hidden; */
       }
-      text {
-        fill: white;
+      button {
+        color: #fff;
+        background: transparent;
+        outline: 1px solid rgba(48,103,145,.75);
+        border: 0px;
+        padding: 5px 10px;
+        cursor: pointer;
       }
-      .mapDiv {
-        border: 5px solid white;
-        position: absolute;
-        margin: 10px;
-        background-color: #333;
-        width: 2000px;
-        height: 1200px;
+      button:hover {
+        background-color: rgba(48,103,145,.5);
       }
-      #tooltip {
-        opacity: .9;
-        background: #333;
-        padding: 5px;
-        border: 1px solid lightgrey;
-        border-radius: 5px;
-        position: absolute;
-        z-index: 10;
-        visibility: hidden;
-        pointer-events: none;
+      button:active {
+        color: #000000;
+        background-color: rgba(48,103,145,.75);
+      }
+      .mapDiv { 
+        border: 10px solid white;
+        position: absolute; 
+        top: 0; 
+        bottom: 0; 
+        width: 800px;
+        height: 500px;
       }
     </style>
   </head>
@@ -66,6 +60,7 @@
     <script>
       d3.json("data/religions.json", function (error, data) {
 
+/*
         var items = [
           {
             year: 'year1955',
@@ -118,25 +113,37 @@
             elem: 'relgMap9'
           }
         ];
+*/
+
+        var items = [
+          {
+            year: 'year1955',
+            relg: 'chrstgenpct',
+            elem: 'relgMap0'
+          },
+          {
+            year: 'year1960',
+            relg: 'chrstgenpct',
+            elem: 'relgMap1'
+          },
+          {
+            year: 'year1970',
+            relg: 'chrstgenpct',
+            elem: 'relgMap2'
+          },
+          {
+            year: 'year1975',
+            relg: 'chrstgenpct',
+            elem: 'relgMap3'
+          }
+        ];
 
       VIZ.createMaps(items, data);
-      VIZ.transform('helix');
+      VIZ.transform('grid');
       d3.select("#loading").remove();
       VIZ.render();
       VIZ.animate();
       window.addEventListener('resize', VIZ.onWindowResize, false);
-      /*
-      VIZ.drawMap(data, 'year1955', 'chrstgenpct', 'map1Container')
-      VIZ.drawMap(data, 'year1960', 'chrstgenpct', 'map2Container')
-      VIZ.drawMap(data, 'year1970', 'chrstgenpct', 'map3Container')
-      VIZ.drawMap(data, 'year1975', 'chrstgenpct', 'map4Container')
-      VIZ.drawMap(data, 'year2010', 'chrstgenpct', 'map5Container')
-      VIZ.drawMap(data, 'year1955', 'islmgenpct', 'map6Container')
-      VIZ.drawMap(data, 'year1960', 'islmgenpct', 'map7Container')
-      VIZ.drawMap(data, 'year1970', 'islmgenpct', 'map8Container')
-      VIZ.drawMap(data, 'year1975', 'islmgenpct', 'map9Container')
-      VIZ.drawMap(data, 'year2010', 'islmgenpct', 'map0Container')
-      */
       });
     </script>
   </body>

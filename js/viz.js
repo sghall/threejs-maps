@@ -4,7 +4,7 @@
   var width = window.innerWidth, height = window.innerHeight;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
-  camera.position.z = 3000;
+  camera.position.z = 5000;
   camera.setLens(30);
 
   VIZ.createMaps = function (list, data) {
@@ -21,20 +21,50 @@
         });
       
     MAPS.each(setData);
-    MAPS.each(objectify);
+    MAPS.each(addToScene);
 
     // REMOVE TRANSFORMS FROM LEAFLET PANE
-    d3.selectAll(".leaflet-map-pane").style("-webkit-transform", "none")
-
+    d3.selectAll(".leaflet-top.leaflet-left")
+      .style("transform", "translate3d(0px, 0px, 5px)")
+      .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
 
     console.log(scene)
   }
 
+  VIZ.rmTransforms = function () {
+    d3.selectAll(".leaflet-top.leaflet-left")
+      .style("transform", "translate3d(0px, 0px, 5px)")
+      .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
+  }
+
   VIZ.drawMap = function (data, year, relig, elemID) {
     var leafletMap = L.mapbox.map(elemID, 'delimited.ho6391dg',{zoomControl: true, tileLayer:{noWrap: true}})
-      .setView([33, 0], 3);
+      .setView([33, 0], 2);
 
-    leafletMap.dragging.disable();
+    leafletMap.on('tileload', function () {
+      console.log("loaded")
+    });
+
+
+    leafletMap.on('ready', function() {
+      d3.selectAll(".leaflet-tile")
+        .each(function (d) {
+          var e = d3.select(this);
+          var m = e.style("-webkit-transform");
+          var r = /\(([^)]+)\)/;
+          var a = m === 'none' ? []: r.exec(m)[1].split(",");
+          if (a.length > 0) {
+            console.log("tile", this, m, +a[4], +a[5])
+            e.style({
+              "-webkit-transform": null,
+              "left": +a[4] + "px",
+              "top": +a[5] + "px"
+            });
+          }
+        });
+    });
+
+    //leafletMap.dragging.disable();
     leafletMap.touchZoom.disable();
     leafletMap.doubleClickZoom.disable();
     leafletMap.scrollWheelZoom.disable();
@@ -45,7 +75,7 @@
     }).addTo(leafletMap);
   }
 
-  function objectify(d) {
+  function addToScene(d) {
     var object = new THREE.CSS3DObject(this);
     object.position = d.random.position;
     scene.add(object);
@@ -84,9 +114,9 @@
     d['helix'] = helix;
 
     var grid = new THREE.Object3D();
-    grid.position.x = (( i % 5 ) * 400) - 800;
-    grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
-    grid.position.z = (Math.floor( i / 25 )) * 1000 - 2000;
+    grid.position.x = (( i % 5 ) * 1050) - 2000;
+    grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
+    grid.position.z = 0;
     d['grid'] = grid;
 
     d3.select(this).datum(d);
