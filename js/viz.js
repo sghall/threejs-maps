@@ -38,23 +38,20 @@
   }
 
   VIZ.drawMap = function (data, year, relig, elemID) {
-    var leafletMap = L.mapbox.map(elemID, 'delimited.ho6391dg',{zoomControl: true, tileLayer:{noWrap: true}})
-      .setView([33, 0], 2);
 
-    leafletMap.on('tileload', function () {
+    var mainMap = L.map(elemID).setView([33, 0], 2);
+    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true}).addTo(mainMap);
+
+    tileLayer.on('load', function () {
       console.log("loaded")
-    });
-
-
-    leafletMap.on('ready', function() {
-      d3.selectAll(".leaflet-tile")
+      d3.select('#' + elemID).selectAll(".leaflet-tile")
         .each(function (d) {
           var e = d3.select(this);
           var m = e.style("-webkit-transform");
           var r = /\(([^)]+)\)/;
           var a = m === 'none' ? []: r.exec(m)[1].split(",");
           if (a.length > 0) {
-            console.log("tile", this, m, +a[4], +a[5])
+            console.log("tile", m, +a[4], +a[5])
             e.style({
               "-webkit-transform": null,
               "left": +a[4] + "px",
@@ -64,15 +61,15 @@
         });
     });
 
-    //leafletMap.dragging.disable();
-    leafletMap.touchZoom.disable();
-    leafletMap.doubleClickZoom.disable();
-    leafletMap.scrollWheelZoom.disable();
+    //mainMap.dragging.disable();
+    mainMap.touchZoom.disable();
+    mainMap.doubleClickZoom.disable();
+    mainMap.scrollWheelZoom.disable();
 
     var geoLayer = L.geoJson(data, {
       style: getStyle(year, relig),
       onEachFeature: onEachFeature
-    }).addTo(leafletMap);
+    }).addTo(mainMap);
   }
 
   function addToScene(d) {
