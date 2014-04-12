@@ -31,7 +31,7 @@
     <script>
       d3.json("data/religions.json", function (error, data) {
 
-/*
+
         var items = [
           {
             year: 'year1955',
@@ -84,8 +84,8 @@
             elem: 'relgMap9'
           }
         ];
-*/
 
+/*
         var items = [
           {
             year: 'year1955',
@@ -108,13 +108,14 @@
             elem: 'relgMap3'
           }
         ];
-
+*/
       VIZ.createMaps(items, data);
       VIZ.transform('grid');
       d3.select("#loading").remove();
       VIZ.render();
       VIZ.animate();
       window.addEventListener('resize', VIZ.onWindowResize, false);
+
       });
     </script>
   </body>

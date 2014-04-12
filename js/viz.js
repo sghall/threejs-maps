@@ -89,9 +89,9 @@
     vector = new THREE.Vector3();
     phi = Math.acos(-1 + ( 2 * i ) / (VIZ.count - 1));
     theta = Math.sqrt((VIZ.count - 1) * Math.PI) * phi;
-    sphere.position.x = 8000 * Math.cos(theta) * Math.sin(phi);
-    sphere.position.y = 8000 * Math.sin(theta) * Math.sin(phi);
-    sphere.position.z = 8000 * Math.cos(phi);
+    sphere.position.x = 1000 * Math.cos(theta) * Math.sin(phi);
+    sphere.position.y = 1000 * Math.sin(theta) * Math.sin(phi);
+    sphere.position.z = 1000 * Math.cos(phi);
     vector.copy(sphere.position).multiplyScalar(2);
     sphere.lookAt(vector);
     d['sphere'] = sphere;
