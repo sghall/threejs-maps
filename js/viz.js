@@ -43,7 +43,6 @@
     var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true}).addTo(mainMap);
 
     tileLayer.on('load', function () {
-      console.log("loaded")
       d3.select('#' + elemID).selectAll(".leaflet-tile")
         .each(function (d) {
           var e = d3.select(this);
@@ -51,7 +50,6 @@
           var r = /\(([^)]+)\)/;
           var a = m === 'none' ? []: r.exec(m)[1].split(",");
           if (a.length > 0) {
-            console.log("tile", m, +a[4], +a[5])
             e.style({
               "-webkit-transform": null,
               "left": +a[4] + "px",
