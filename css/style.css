@@ -1,8 +1,40 @@
-body { 
-  margin:0; 
-  padding:0; 
-  background-color: #000;
+html { /* From https://github.com/Famous/core/blob/master/famous.css */
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
+
+body { /* From https://github.com/Famous/core/blob/master/famous.css */
+    width: 100%;
+    background-color: #000;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-perspective: 0;
+    perspective: none;
+    overflow: hidden;
+}
+
+a, p, h3, h6 {
+  color: #fff;
+  background: transparent;
+}
+
+h5 {
+  color: #fff;
+  padding-top: 35px;
+}
+
 button {
   color: #fff;
   background: transparent;
@@ -11,14 +43,17 @@ button {
   padding: 5px 10px;
   cursor: pointer;
 }
+
 button:hover {
   background-color: rgba(48,103,145,.5);
 }
+
 button:active {
   color: #000000;
   background-color: rgba(48,103,145,.75);
 }
-.mapDiv { 
+
+.mapDiv {
   border: 10px solid rgba(255,255,255,.75);
   border-radius: 6px;
   position: absolute; 
@@ -26,6 +61,16 @@ button:active {
   bottom: 0; 
   width: 800px;
   height: 500px;
+}
+
+path {
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;  
+}
+
+.leaflet-map-pane {
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
 }
 
 #loading {

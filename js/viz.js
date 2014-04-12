@@ -15,7 +15,7 @@
       .data(list).enter()
       .append("div")
         .attr("class", "mapDiv")
-        .attr("id", function (d) { console.log(d); return d.elem; })
+        .attr("id", function (d) { return d.elem; })
         .each(function (d) {
           VIZ.drawMap(data, d.year, d.relg, d.elem);
         });
@@ -23,15 +23,7 @@
     MAPS.each(setData);
     MAPS.each(addToScene);
 
-    // REMOVE TRANSFORMS FROM LEAFLET PANE
-    d3.selectAll(".leaflet-top.leaflet-left")
-      .style("transform", "translate3d(0px, 0px, 5px)")
-      .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
-
-    console.log(scene)
-  }
-
-  VIZ.rmTransforms = function () {
+    // MOVE ZOOM CONTROLS IN FRONT OF MAP
     d3.selectAll(".leaflet-top.leaflet-left")
       .style("transform", "translate3d(0px, 0px, 5px)")
       .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
@@ -42,6 +34,7 @@
     var mainMap = L.map(elemID).setView([33, 0], 2);
     var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true}).addTo(mainMap);
 
+    // FIX LINES BETWEEN TILES IN SAFARI
     tileLayer.on('load', function () {
       d3.select('#' + elemID).selectAll(".leaflet-tile")
         .each(function (d) {
@@ -85,22 +78,9 @@
     random.position.z = Math.random() * 4000 - 2000;
     d['random'] = random;
 
-/*
     var sphere = new THREE.Object3D();
-    vector = new THREE.Vector3();
-    phi = Math.acos( 10 * i ) / (VIZ.count - 1);
-    theta = Math.sqrt((VIZ.count - 1) * Math.PI) * phi;
-    sphere.position.x = 2000 * Math.cos(theta) * Math.sin(phi);
-    sphere.position.y = 2000 * Math.sin(theta) * Math.sin(phi);
-    sphere.position.z = 2000 * Math.cos(phi);
-    vector.copy(sphere.position).multiplyScalar(2);
-    sphere.lookAt(vector);
-    d['sphere'] = sphere;
-*/
-
     phi = Math.acos( -1 + ( 2 * i ) / 10 );
     theta = Math.sqrt( 10 * Math.PI ) * phi;
-    var sphere = new THREE.Object3D();
     vector = new THREE.Vector3();
     sphere.position.x = 1000 * Math.cos( theta ) * Math.sin( phi );
     sphere.position.y = 1000 * Math.sin( theta ) * Math.sin( phi );
