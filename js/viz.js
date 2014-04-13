@@ -37,24 +37,6 @@
     var mainMap = L.map(elemID).setView([33, 0], 2);
     var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true}).addTo(mainMap);
 
-    // FIX LINES BETWEEN TILES IN SAFARI
-    tileLayer.on('load', function () {
-      d3.select('#' + elemID).selectAll(".leaflet-tile")
-        .each(function (d) {
-          var e = d3.select(this);
-          var m = e.style("-webkit-transform");
-          var r = /\(([^)]+)\)/;
-          var a = m === 'none' ? []: r.exec(m)[1].split(",");
-          if (a.length > 0) {
-            e.style({
-              "-webkit-transform": null,
-              "left": +a[4] + "px",
-              "top": +a[5] + "px"
-            });
-          }
-        });
-    });
-
     //mainMap.dragging.disable();
     mainMap.touchZoom.disable();
     mainMap.doubleClickZoom.disable();
