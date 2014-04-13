@@ -18,7 +18,10 @@
         .attr("id", function (d) { return d.elem; })
         .each(function (d) {
           VIZ.drawMap(data, d.year, d.relg, d.elem);
-        });
+        })
+      //.append("div")
+      //  .attr("class", "mapDiv back")
+      //  .attr("transform", "rotateY(180deg)");
       
     MAPS.each(setData);
     MAPS.each(addToScene);

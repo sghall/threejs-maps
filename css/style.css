@@ -54,6 +54,7 @@ button:active {
 }
 
 .mapDiv {
+ /* -webkit-backface-visibility:hidden; */
   border: 10px solid rgba(255,255,255,.75);
   border-radius: 6px;
   position: absolute; 
@@ -61,6 +62,10 @@ button:active {
   bottom: 0; 
   width: 800px;
   height: 500px;
+}
+
+.mapDiv.back {
+  background-color: grey;
 }
 
 path {
