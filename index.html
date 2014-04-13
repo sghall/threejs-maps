@@ -85,7 +85,7 @@
           }
         ];
 
-      VIZ.createMaps(items.filter(function (d, i) { return i < 5; }), data);
+      VIZ.createMaps(items.filter(function (d, i) { return i < 10; }), data);
       VIZ.transform('grid');
       d3.select("#loading").remove();
       VIZ.render();
