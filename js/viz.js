@@ -9,7 +9,7 @@
 
   VIZ.createMaps = function (list, data) {
 
-    VIZ.count = data.length;
+    VIZ.count = list.length;
 
     var MAPS = d3.selectAll('.mapDiv')
       .data(list).enter()
@@ -64,8 +64,8 @@
     d['random'] = random;
 
     var sphere = new THREE.Object3D();
-    phi = Math.acos( -1 + ( 2 * i ) / 10 );
-    theta = Math.sqrt( 10 * Math.PI ) * phi;
+    phi = Math.acos( -1 + ( 2 * i ) / VIZ.count );
+    theta = Math.sqrt( VIZ.count * Math.PI ) * phi;
     vector = new THREE.Vector3();
     sphere.position.x = 1000 * Math.cos( theta ) * Math.sin( phi );
     sphere.position.y = 1000 * Math.sin( theta ) * Math.sin( phi );
