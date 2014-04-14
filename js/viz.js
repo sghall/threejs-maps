@@ -7,24 +7,37 @@
   camera.position.z = 5000;
   camera.setLens(30);
 
-  VIZ.createMaps = function (list, data) {
+ VIZ.drawMapBox = function (data) {
 
-    VIZ.count = list.length;
+    var maps = [];
+    var keys = data.features[0].properties.data;
 
-    var MAPS = d3.selectAll('.mapDiv')
-      .data(list).enter()
+    for (var key in keys) {
+      if (key != 'state' && key != 'statecode') {
+        maps.push({
+          elem: key,
+          title: keys[key].title
+        });
+      }
+    }
+
+    // USED FOR SPHERE CALCS
+    VIZ.count = maps.length;
+
+    var elements = d3.selectAll('.mapDiv')
+      .data(maps).enter()
       .append("div")
         .attr("class", "mapDiv")
         .attr("id", function (d) { return d.elem; })
         .each(function (d) {
-          VIZ.drawMap(data, d.year, d.relg, d.elem);
+          VIZ.drawMap(data, d.elem);
         })
       //.append("div")
       //  .attr("class", "mapDiv back")
       //  .attr("transform", "rotateY(180deg)");
       
-    MAPS.each(setData);
-    MAPS.each(addToScene);
+    elements.each(setData);
+    elements.each(addToScene);
 
     // MOVE ZOOM CONTROLS IN FRONT OF MAP
     d3.selectAll(".leaflet-top.leaflet-left")
@@ -32,20 +45,50 @@
       .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
   }
 
-  VIZ.drawMap = function (data, year, relig, elemID) {
 
-    var mainMap = L.map(elemID).setView([33, 0], 2);
-    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true}).addTo(mainMap);
 
-    //mainMap.dragging.disable();
-    mainMap.touchZoom.disable();
-    mainMap.doubleClickZoom.disable();
-    mainMap.scrollWheelZoom.disable();
+  VIZ.drawMap = function (data, elemID) {
+
+    var scale = d3.scale.quantile()
+      .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
+
+    var values = data.features.map(function (d) {
+     return d.properties.data[elemID].inc;
+    });
+
+    scale.domain(d3.extent(values.filter(function (d) {
+      return d >= 0;
+    })));
+
+    var map = L.map(elemID)
+      .setView([37.8, -96], 4);
+
+    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
+      .addTo(map);
+
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
 
     var geoLayer = L.geoJson(data, {
-      style: getStyle(year, relig),
+      style: getStyleFun(scale, elemID),
       onEachFeature: onEachFeature
-    }).addTo(mainMap);
+    }).addTo(map);
+
+  }
+
+  function getStyleFun(scale, elemID) {
+    return function (feature) {
+      var data = feature.properties.data;
+      return {
+        fillColor: scale(data[elemID].inc),
+        weight: 1,
+        opacity: 1,
+        color: 'grey',
+        dashArray: '3',
+        fillOpacity: 0.6
+      };
+    }
   }
 
   function addToScene(d) {
@@ -95,21 +138,7 @@
     d3.select(this).datum(d);
   }
 
-  function colors (d) {
-    return d >= 0.9 ? '#703f29' :
-           d >= 0.8 ? '#955436' :
-           d >= 0.7 ? '#b05e32' :
-           d >= 0.6 ? '#d56c2a' :
-           d >= 0.5 ? '#ea8435' :
-           d >= 0.4 ? '#f89e5d' :
-           d >= 0.3 ? '#fbb885' :
-           d >= 0.2 ? '#fdd3b1' :
-           d >= 0.1 ? '#fee6d3' :
-           d  > 0.0 ? '#fff3ea' :
-                      '#8b8682';
-  }
-
-  function getColor (data, year, relig) {
+  function getColor (data, elemID) {
     var hex = '#000000';
     if (data === undefined) {
       return hex;
@@ -120,20 +149,6 @@
         }
       });
       return hex;
-    }
-  }
-
-  function getStyle(year, relig) {
-    return function (feature) {
-      var data = feature.properties.data;
-      return {
-        fillColor: getColor(data, year, relig),
-        weight: 1,
-        opacity: 1,
-        color: 'grey',
-        dashArray: '3',
-        fillOpacity: 0.6
-      };
     }
   }
 
@@ -170,12 +185,6 @@
         layer.bringToFront();
     }
   }
-
-  d3.select("#menu").selectAll('button')
-    .data(['sphere', 'helix', 'grid']).enter()
-      .append('button')
-      .html(function (d) { return d; })
-      .on('click', function (d) { VIZ.transform(d); })
 
   VIZ.render = function () {
     renderer.render(scene, camera);
