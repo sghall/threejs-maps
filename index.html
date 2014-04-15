@@ -32,13 +32,23 @@
     <script>
       d3.json("data/us-cdc.json", function (error, data) {
 
+        var maps = [];
+        var keys = data.features[0].properties.data;
+
+        for (var key in keys) {
+          maps.push({
+            elem: key,
+            title: keys[key].title
+          });
+        }
+
         d3.select("#menu").selectAll('button')
           .data(['sphere', 'helix', 'grid']).enter()
           .append('button')
           .html(function (d) { return d; })
           .on('click', function (d) { VIZ.transform(d); })
 
-        VIZ.drawMapBox(data);
+        VIZ.drawMapBox(maps.filter(function (d, i) { return i < 10; }), data);
         VIZ.transform('grid');
         d3.select("#loading").remove();
         VIZ.render();

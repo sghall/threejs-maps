@@ -7,20 +7,7 @@
   camera.position.z = 5000;
   camera.setLens(30);
 
- VIZ.drawMapBox = function (data) {
-
-    var maps = [];
-    var keys = data.features[0].properties.data;
-
-    for (var key in keys) {
-      if (key != 'state' && key != 'statecode') {
-        maps.push({
-          elem: key,
-          title: keys[key].title
-        });
-      }
-    }
-
+ VIZ.drawMapBox = function (maps, data) {
     // USED FOR SPHERE CALCS
     VIZ.count = maps.length;
 
@@ -110,9 +97,9 @@
     phi = Math.acos( -1 + ( 2 * i ) / VIZ.count );
     theta = Math.sqrt( VIZ.count * Math.PI ) * phi;
     vector = new THREE.Vector3();
-    sphere.position.x = 1000 * Math.cos( theta ) * Math.sin( phi );
-    sphere.position.y = 1000 * Math.sin( theta ) * Math.sin( phi );
-    sphere.position.z = 1000 * Math.cos( phi );
+    sphere.position.x = 1200 * Math.cos( theta ) * Math.sin( phi );
+    sphere.position.y = 1200 * Math.sin( theta ) * Math.sin( phi );
+    sphere.position.z = 1200 * Math.cos( phi );
     vector.copy( sphere.position ).multiplyScalar( 2 );
     sphere.lookAt( vector );
     d['sphere'] = sphere;
