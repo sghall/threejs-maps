@@ -19,10 +19,8 @@
         .each(function (d) {
           VIZ.drawMap(data, d.elem);
         })
-      //.append("div")
-      //  .attr("class", "mapDiv back")
-      //  .attr("transform", "rotateY(180deg)");
-      
+        .on("click", VIZ.transformOne);
+
     elements.each(setData);
     elements.each(addToScene);
 
@@ -81,6 +79,7 @@
   function addToScene(d) {
     var object = new THREE.CSS3DObject(this);
     object.position = d.random.position;
+    object.name = d.elem;
     scene.add(object);
   }
 
@@ -146,6 +145,12 @@
     });
   }
 
+  function zoomMap (d) {
+
+
+  }
+
+
   function mouseover(e) {
     var layer = e.target;
     layer.setStyle({
@@ -175,6 +180,40 @@
 
   VIZ.render = function () {
     renderer.render(scene, camera);
+  }
+
+  VIZ.transformOne = function (d) {
+    console.log(d);
+
+    VIZ.resetControls()
+    var object = scene.getObjectByName(d.elem);
+    console.log(d);
+
+    var duration = 1000;
+
+    TWEEN.removeAll();
+
+    var center = new THREE.Object3D();
+    center.position.x = 0;
+    center.position.y = 0;
+    center.position.z = 3000;
+
+    var newPos = center.position;
+    var coords = new TWEEN.Tween(object.position)
+          .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
+          .easing(TWEEN.Easing.Sinusoidal.InOut)
+          .start();
+
+    var newRot = center.rotation;
+    var rotate = new TWEEN.Tween(object.rotation)
+          .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
+          .easing(TWEEN.Easing.Sinusoidal.InOut)
+          .start();
+    
+   var update = new TWEEN.Tween(this)
+       .to({}, duration)
+       .onUpdate(VIZ.render)
+       .start();
   }
 
   VIZ.transform = function (layout) {
@@ -218,6 +257,8 @@
   controls.minDistance = 100;
   controls.maxDistance = 6000;
   controls.addEventListener('change', VIZ.render);
+
+  VIZ.resetControls = controls.reset;
 
   VIZ.onWindowResize = function () {
     camera.aspect = width / height;
