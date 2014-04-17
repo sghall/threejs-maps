@@ -3,6 +3,14 @@
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
 
+  VIZ.center = new THREE.Object3D();
+  VIZ.center.position.x = 0;
+  VIZ.center.position.y = 0;
+  VIZ.center.position.z = 3500;
+
+  VIZ.state = 'random';
+  VIZ.activeMap;
+
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 5000;
   camera.setLens(30);
@@ -19,7 +27,28 @@
         .each(function (d) {
           VIZ.drawMap(data, d.elem);
         })
-        .on("click", VIZ.transformOne);
+        .on("click", function (d) {
+          var arr = [], curActive = VIZ.activeMap;
+          var newActive = scene.getObjectByName(d.elem);
+          newActive.newPos = VIZ.center;
+          if (curActive) {
+            if (curActive.name !== d.elem) {
+              curActive.newPos = d[VIZ.state].position;
+              arr.push(curActive, newActive);
+              VIZ.transformZoom(arr);
+              VIZ.activeMap = newActive;
+            } else {
+              delete newActive.newPos
+              arr.push(newActive);
+              VIZ.transformZoom(arr);
+              VIZ.activeMap = null;
+            }
+          } else {
+            arr.push(newActive);
+            VIZ.transformZoom(arr);
+            VIZ.activeMap = newActive;
+          }
+        });
 
     elements.each(setData);
     elements.each(addToScene);
@@ -29,8 +58,6 @@
       .style("transform", "translate3d(0px, 0px, 5px)")
       .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
   }
-
-
 
   VIZ.drawMap = function (data, elemID) {
 
@@ -78,7 +105,7 @@
 
   function addToScene(d) {
     var object = new THREE.CSS3DObject(this);
-    object.position = d.random.position;
+    object.position = d[VIZ.state].position;
     object.name = d.elem;
     scene.add(object);
   }
@@ -145,12 +172,6 @@
     });
   }
 
-  function zoomMap (d) {
-
-
-  }
-
-
   function mouseover(e) {
     var layer = e.target;
     layer.setStyle({
@@ -182,33 +203,32 @@
     renderer.render(scene, camera);
   }
 
-  VIZ.transformOne = function (d) {
-    console.log(d);
-
-    VIZ.resetControls()
-    var object = scene.getObjectByName(d.elem);
-    console.log(d);
-
-    var duration = 1000;
+  VIZ.transformZoom = function (arr) {
+    var newPos, newRot, duration = 1000;
 
     TWEEN.removeAll();
 
-    var center = new THREE.Object3D();
-    center.position.x = 0;
-    center.position.y = 0;
-    center.position.z = 3000;
+    arr.forEach(function (object){
+      console.log("object", object);
 
-    var newPos = center.position;
-    var coords = new TWEEN.Tween(object.position)
-          .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
-          .easing(TWEEN.Easing.Sinusoidal.InOut)
-          .start();
+      if (object.newPos) {
+        newPos = object.newPos.position;
+        newRot = object.newPos.rotation;
+      } else {
+        newPos = object.element.__data__[VIZ.state].position;
+        newRot = object.element.__data__[VIZ.state].rotation;
+      }
 
-    var newRot = center.rotation;
-    var rotate = new TWEEN.Tween(object.rotation)
-          .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
-          .easing(TWEEN.Easing.Sinusoidal.InOut)
-          .start();
+      var coords = new TWEEN.Tween(object.position)
+            .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
+
+      var rotate = new TWEEN.Tween(object.rotation)
+            .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
+    });
     
    var update = new TWEEN.Tween(this)
        .to({}, duration)
