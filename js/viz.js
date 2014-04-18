@@ -6,13 +6,13 @@
   VIZ.center = new THREE.Object3D();
   VIZ.center.position.x = 0;
   VIZ.center.position.y = 0;
-  VIZ.center.position.z = 3500;
+  VIZ.center.position.z = 3700;
 
   VIZ.state = 'random';
   VIZ.activeMap;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
-  camera.position.z = 5000;
+  camera.position.z = 4500;
   camera.setLens(30);
 
  VIZ.drawMapBox = function (maps, data) {
@@ -28,24 +28,21 @@
           VIZ.drawMap(data, d.elem);
         })
         .on("click", function (d) {
-          var arr = [], curActive = VIZ.activeMap;
+          var curActive = VIZ.activeMap;
           var newActive = scene.getObjectByName(d.elem);
           newActive.newPos = VIZ.center;
           if (curActive) {
             if (curActive.name !== d.elem) {
               curActive.newPos = d[VIZ.state].position;
-              arr.push(curActive, newActive);
-              VIZ.transformZoom(arr);
+              VIZ.transformZoom(curActive, newActive);
               VIZ.activeMap = newActive;
             } else {
               delete newActive.newPos
-              arr.push(newActive);
-              VIZ.transformZoom(arr);
+              VIZ.transformZoom(newActive);
               VIZ.activeMap = null;
             }
           } else {
-            arr.push(newActive);
-            VIZ.transformZoom(arr);
+            VIZ.transformZoom(newActive);
             VIZ.activeMap = newActive;
           }
         });
@@ -72,7 +69,7 @@
       return d >= 0;
     })));
 
-    var map = L.map(elemID)
+    var map = L.mapbox.map(elemID)
       .setView([37.8, -96], 4);
 
     var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
@@ -86,6 +83,27 @@
       style: getStyleFun(scale, elemID),
       onEachFeature: onEachFeature
     }).addTo(map);
+    
+    map.legendControl.addLegend(getLegendHTML());
+
+    function getLegendHTML() {
+      var grades = scale.quantiles();
+      console.log("grades", grades)
+      //var colors = getStyleFun(scale, elemID),
+      var labels = [], from, to;
+
+      for (var i = 0; i < grades.length; i++) {
+        from = grades[i];
+        to = grades[i + 1];
+
+        labels.push(
+          '<li><span class="swatch" style="background:' + scale(from) + '"></span> ' +
+          from + (to ? '&ndash;' + to : '+')) + '</li>';
+      }
+
+      return '<span>People per square mile</span><ul>' + labels.join('') + '</ul>';
+    }
+
 
   }
 
@@ -203,18 +221,22 @@
     renderer.render(scene, camera);
   }
 
-  VIZ.transformZoom = function (arr) {
+  VIZ.transformZoom = function () {
     var newPos, newRot, duration = 1000;
+    var arr = Array.prototype.slice.call(arguments, 0);
+
+    controls.reset();
+
 
     TWEEN.removeAll();
 
     arr.forEach(function (object){
-      console.log("object", object);
 
       if (object.newPos) {
         newPos = object.newPos.position;
         newRot = object.newPos.rotation;
       } else {
+        console.log("object", VIZ.state ,object, object.element.__data__);
         newPos = object.element.__data__[VIZ.state].position;
         newRot = object.element.__data__[VIZ.state].rotation;
       }
@@ -237,6 +259,7 @@
   }
 
   VIZ.transform = function (layout) {
+    VIZ.state = layout;
     var duration = 1000;
 
     TWEEN.removeAll();
