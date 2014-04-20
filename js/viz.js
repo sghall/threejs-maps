@@ -32,16 +32,20 @@
           var newActive = scene.getObjectByName(d.elem);
           newActive.newPos = VIZ.center;
           if (curActive) {
-            if (curActive.name !== d.elem) {
+            // SWITCH ONE ACTIVE MAP FOR ANOTHER
+            if (curActive !== newActive) {
               curActive.newPos = d[VIZ.state].position;
               VIZ.transformZoom(curActive, newActive);
               VIZ.activeMap = newActive;
             } else {
-              delete newActive.newPos
-              VIZ.transformZoom(newActive);
-              VIZ.activeMap = null;
+              // RETURN ACTIVE MAP TO LAYOUT POSITION
+              console.log("return active", VIZ.state)
+              delete curActive.newPos
+              VIZ.transformZoom(curActive);
+              VIZ.activeMap = undefined;
             }
           } else {
+            // NO ACTIVE MAP - ZOOM CLICKED MAP
             VIZ.transformZoom(newActive);
             VIZ.activeMap = newActive;
           }
@@ -54,6 +58,12 @@
     d3.selectAll(".leaflet-top.leaflet-left")
       .style("transform", "translate3d(0px, 0px, 5px)")
       .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
+
+    // MOVE LEGENDS IN FRONT OF MAP
+    d3.selectAll(".map-legend")
+      .style("transform", "translate3d(0px, 0px, 5px)")
+      .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
+
   }
 
   VIZ.drawMap = function (data, elemID) {
@@ -119,13 +129,19 @@
 
   function addToScene(d) {
     var object = new THREE.CSS3DObject(this);
-    object.position = d[VIZ.state].position;
+    object.position = d.random.position;
     object.name = d.elem;
     scene.add(object);
   }
 
   function setData(d, i) {
     var vector, phi, theta;
+
+    var random = new THREE.Object3D();
+    random.position.x = Math.random() * 4000 - 2000;
+    random.position.y = Math.random() * 4000 - 2000;
+    random.position.z = Math.random() * 4000 - 2000;
+    d['random'] = random;
 
     var sphere = new THREE.Object3D();
     phi = Math.acos( -1 + ( 2 * i ) / VIZ.count );
@@ -143,8 +159,6 @@
     grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
     grid.position.z = 0;
     d['grid'] = grid;
-
-    d3.select(this).datum(d);
   }
 
   function getColor (data, elemID) {
@@ -211,6 +225,7 @@
     arr.forEach(function (object){
 
       if (object.newPos) {
+        console.log("object", VIZ.state ,object, object.element.__data__);
         newPos = object.newPos.position;
         newRot = object.newPos.rotation;
       } else {
@@ -236,8 +251,8 @@
        .start();
   }
 
-  VIZ.transform = function (layout) {
-    VIZ.state = layout;
+  VIZ.transform = function () {
+    var layout = VIZ.state;
     var duration = 1000;
 
     TWEEN.removeAll();

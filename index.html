@@ -47,12 +47,12 @@
           .append('button')
           .html(function (d) { return d; })
           .on('click', function (d) {
-            VIZ.state = d + "";
-            VIZ.transform(d); 
+            VIZ.state = d;
+            VIZ.transform(); 
           })
 
         VIZ.drawMapBox(maps.filter(function (d, i) { return i < 10; }), data);
-        VIZ.transform('grid');
+        VIZ.transform();
         d3.select("#loading").remove();
         VIZ.render();
         VIZ.animate();
