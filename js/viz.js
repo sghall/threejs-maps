@@ -238,12 +238,12 @@
 
       var coords = new TWEEN.Tween(object.position)
             .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
-            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .easing(TWEEN.Easing.Quadratic.InOut)
             .start();
 
       var rotate = new TWEEN.Tween(object.rotation)
             .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
-            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .easing(TWEEN.Easing.Quadratic.InOut)
             .start();
     });
     
