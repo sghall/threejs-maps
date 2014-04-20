@@ -104,9 +104,11 @@
         from = d3.format(".2f")(grades[i]);
         to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
 
+        console.log("scale", grades, "from", from, "color", scale(from));
+
         labels.push(
           '<li><span class="swatch" style="background:' + 
-          scale(from) + '"></span> ' +
+          scale(grades[i]) + '"></span> ' +
           from + (to ? '&ndash;' + to : '+') + '</li>');
       }
       return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
