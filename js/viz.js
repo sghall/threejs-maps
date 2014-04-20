@@ -8,19 +8,19 @@
   VIZ.center.position.y = 0;
   VIZ.center.position.z = 3700;
 
-  VIZ.state = 'random';
+  VIZ.state = 'grid';
   VIZ.activeMap;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 4500;
   camera.setLens(30);
 
- VIZ.drawMapBox = function (maps, data) {
+ VIZ.drawMapBox = function (mapList, data) {
     // USED FOR SPHERE CALCS
-    VIZ.count = maps.length;
+    VIZ.count = mapList.length;
 
     var elements = d3.selectAll('.mapDiv')
-      .data(maps).enter()
+      .data(mapList).enter()
       .append("div")
         .attr("class", "mapDiv")
         .attr("id", function (d) { return d.elem; })
@@ -88,8 +88,6 @@
 
     function getLegendHTML() {
       var grades = scale.quantiles();
-      console.log("grades", grades)
-      //var colors = getStyleFun(scale, elemID),
       var labels = [], from, to;
 
       for (var i = 0; i < grades.length; i++) {
@@ -97,14 +95,12 @@
         to = grades[i + 1];
 
         labels.push(
-          '<li><span class="swatch" style="background:' + scale(from) + '"></span> ' +
-          from + (to ? '&ndash;' + to : '+')) + '</li>';
+          '<li><span class="swatch" style="background:' + 
+          scale(from) + '"></span> ' +
+          from + (to ? '&ndash;' + to : '+') + '</li>');
       }
-
       return '<span>People per square mile</span><ul>' + labels.join('') + '</ul>';
     }
-
-
   }
 
   function getStyleFun(scale, elemID) {
@@ -131,12 +127,6 @@
   function setData(d, i) {
     var vector, phi, theta;
 
-    var random = new THREE.Object3D();
-    random.position.x = Math.random() * 4000 - 2000;
-    random.position.y = Math.random() * 4000 - 2000;
-    random.position.z = Math.random() * 4000 - 2000;
-    d['random'] = random;
-
     var sphere = new THREE.Object3D();
     phi = Math.acos( -1 + ( 2 * i ) / VIZ.count );
     theta = Math.sqrt( VIZ.count * Math.PI ) * phi;
@@ -147,18 +137,6 @@
     vector.copy( sphere.position ).multiplyScalar( 2 );
     sphere.lookAt( vector );
     d['sphere'] = sphere;
-
-    var helix = new THREE.Object3D();
-    vector = new THREE.Vector3();
-    phi = i * 0.250 + Math.PI;
-    helix.position.x = 4000 * Math.sin(phi);
-    helix.position.y = - i + 2000;
-    helix.position.z = 4000 * Math.cos(phi);
-    vector.x = helix.position.x * 2;
-    vector.y = helix.position.y;
-    vector.z = helix.position.z * 2;
-    helix.lookAt(vector);
-    d['helix'] = helix;
 
     var grid = new THREE.Object3D();
     grid.position.x = (( i % 5 ) * 1050) - 2000;
