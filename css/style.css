@@ -53,6 +53,20 @@ button:active {
   background-color: rgba(48,103,145,.75);
 }
 
+.map-legend .swatch {
+  width:20px;
+  height:20px;
+  float:left;
+  margin-right:10px;
+}
+
+.map-legend ul {
+  list-style-type: none;
+  -webkit-padding-start: 5px;
+  -moz-padding-start: 5px;
+  padding-start: 5px;
+}
+
 .mapDiv {
  /* -webkit-backface-visibility:hidden; */
   border: 10px solid rgba(255,255,255,.75);

@@ -99,7 +99,7 @@
           scale(from) + '"></span> ' +
           from + (to ? '&ndash;' + to : '+') + '</li>');
       }
-      return '<span>People per square mile</span><ul>' + labels.join('') + '</ul>';
+      return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
     }
   }
 
