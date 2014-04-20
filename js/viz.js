@@ -91,8 +91,8 @@
       var labels = [], from, to;
 
       for (var i = 0; i < grades.length; i++) {
-        from = grades[i];
-        to = grades[i + 1];
+        from = d3.format(".2f")(grades[i]);
+        to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
 
         labels.push(
           '<li><span class="swatch" style="background:' + 
