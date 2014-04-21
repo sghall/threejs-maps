@@ -8,8 +8,7 @@
   VIZ.center.position.y = 0;
   VIZ.center.position.z = 3700;
 
-  VIZ.state = 'grid';
-  VIZ.activeMap;
+  VIZ.state = 'grid', VIZ.activeMap;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 4500;
@@ -31,22 +30,19 @@
           var curActive = VIZ.activeMap;
           var newActive = scene.getObjectByName(d.elem);
           newActive.newPos = VIZ.center;
-          if (curActive) {
+          if (curActive && curActive !== newActive) {
             // SWITCH ONE ACTIVE MAP FOR ANOTHER
-            if (curActive !== newActive) {
-              curActive.newPos = d[VIZ.state].position;
-              VIZ.transformZoom(curActive, newActive);
-              VIZ.activeMap = newActive;
-            } else {
-              // RETURN ACTIVE MAP TO LAYOUT POSITION
-              console.log("return active", VIZ.state)
-              delete curActive.newPos
-              VIZ.transformZoom(curActive);
-              VIZ.activeMap = undefined;
-            }
+            curActive.newPos = d[VIZ.state].position;
+            VIZ.transform(curActive, newActive);
+            VIZ.activeMap = newActive;
+          } else if (curActive && curActive === newActive) {
+            // RETURN ACTIVE MAP TO LAYOUT POSITION
+            delete curActive.newPos
+            VIZ.transform(curActive);
+            VIZ.activeMap = undefined;
           } else {
             // NO ACTIVE MAP - ZOOM CLICKED MAP
-            VIZ.transformZoom(newActive);
+            VIZ.transform(newActive);
             VIZ.activeMap = newActive;
           }
         });
@@ -103,8 +99,6 @@
       for (var i = 0; i < grades.length; i++) {
         from = d3.format(".2f")(grades[i]);
         to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
-
-        console.log("scale", grades, "from", from, "color", scale(from));
 
         labels.push(
           '<li><span class="swatch" style="background:' + 
@@ -215,68 +209,43 @@
     renderer.render(scene, camera);
   }
 
-  VIZ.transformZoom = function () {
-    var newPos, newRot, duration = 1000;
-    var arr = Array.prototype.slice.call(arguments, 0);
-
-    controls.reset();
-
+  VIZ.transform = function () {
+    var arr, duration = 1000;
+    if (arguments.length > 0) {
+      arr = Array.prototype.slice.call(arguments, 0);
+      controls.reset();
+    }else {
+      arr = scene.children;
+    }
 
     TWEEN.removeAll();
 
     arr.forEach(function (object){
+      var newPos, newRot, coords, rotate, update;
 
       if (object.newPos) {
-        console.log("object", VIZ.state ,object, object.element.__data__);
         newPos = object.newPos.position;
         newRot = object.newPos.rotation;
       } else {
-        console.log("object", VIZ.state ,object, object.element.__data__);
         newPos = object.element.__data__[VIZ.state].position;
         newRot = object.element.__data__[VIZ.state].rotation;
       }
 
-      var coords = new TWEEN.Tween(object.position)
-            .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
+      coords = new TWEEN.Tween(object.position)
+        .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
+        .easing(TWEEN.Easing.Sinusoidal.InOut)
+        .start();
 
-      var rotate = new TWEEN.Tween(object.rotation)
-            .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
+      rotate = new TWEEN.Tween(object.rotation)
+        .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
+        .easing(TWEEN.Easing.Sinusoidal.InOut)
+        .start();
     });
     
-   var update = new TWEEN.Tween(this)
-       .to({}, duration)
-       .onUpdate(VIZ.render)
-       .start();
-  }
-
-  VIZ.transform = function () {
-    var layout = VIZ.state;
-    var duration = 1000;
-
-    TWEEN.removeAll();
-
-    scene.children.forEach(function (object){
-      var newPos = object.element.__data__[layout].position;
-      var coords = new TWEEN.Tween(object.position)
-            .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
-            .easing(TWEEN.Easing.Sinusoidal.InOut)
-            .start();
-
-      var newRot = object.element.__data__[layout].rotation;
-      var rotate = new TWEEN.Tween(object.rotation)
-            .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
-            .easing(TWEEN.Easing.Sinusoidal.InOut)
-            .start();
-    });
-    
-   var update = new TWEEN.Tween(this)
-       .to({}, duration)
-       .onUpdate(VIZ.render)
-       .start();
+   update = new TWEEN.Tween(this)
+     .to({}, duration)
+     .onUpdate(VIZ.render)
+     .start();
   }
 
   VIZ.animate = function () {
