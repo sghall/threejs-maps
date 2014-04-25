@@ -14,6 +14,55 @@
   camera.position.z = 4500;
   camera.setLens(30);
 
+ VIZ.drawD3Maps = function (mapList, data) {
+    // USED FOR SPHERE CALCS
+    VIZ.count = mapList.length;
+
+    var elements = d3.selectAll('.mapDiv')
+      .data(mapList).enter()
+      .append("svg")
+        .attr("class", "mapDiv")
+        .attr("id", function (d) { return d.elem; })
+        .each(function (d) {
+          VIZ.drawD3Map(data, d.elem);
+        })
+        .on("click", onMapClick);
+
+    elements.each(setData);
+    elements.each(addToScene);
+  }
+
+  VIZ.drawD3Map = function (data, elemID) {
+
+    var scale = d3.scale.quantile()
+      .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
+
+    var values = data.features.map(function (d) {
+     return d.properties.data[elemID].inc;
+    });
+
+    scale.domain(d3.extent(values.filter(function (d) {
+      return d >= 0;
+    })));
+
+    var map = L.mapbox.map(elemID)
+      .setView([37.8, -96], 4);
+
+    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
+      .addTo(map);
+
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+
+    var geoLayer = L.geoJson(data, {
+      style: getStyleFun(scale, elemID),
+      onEachFeature: onEachFeature
+    }).addTo(map);
+    
+    map.legendControl.addLegend(getLegendHTML(scale));
+  }
+
  VIZ.drawMapBox = function (mapList, data) {
     // USED FOR SPHERE CALCS
     VIZ.count = mapList.length;
@@ -26,26 +75,7 @@
         .each(function (d) {
           VIZ.drawMap(data, d.elem);
         })
-        .on("click", function (d) {
-          var curActive = VIZ.activeMap;
-          var newActive = scene.getObjectByName(d.elem);
-          newActive.newPos = VIZ.center;
-          if (curActive && curActive !== newActive) {
-            // SWITCH ONE ACTIVE MAP FOR ANOTHER
-            curActive.newPos = d[VIZ.state].position;
-            VIZ.transform(curActive, newActive);
-            VIZ.activeMap = newActive;
-          } else if (curActive && curActive === newActive) {
-            // RETURN ACTIVE MAP TO LAYOUT POSITION
-            delete curActive.newPos
-            VIZ.transform(curActive);
-            VIZ.activeMap = undefined;
-          } else {
-            // NO ACTIVE MAP - ZOOM CLICKED MAP
-            VIZ.transform(newActive);
-            VIZ.activeMap = newActive;
-          }
-        });
+        .on("click", onMapClick)
 
     elements.each(setData);
     elements.each(addToScene);
@@ -60,6 +90,45 @@
       .style("transform", "translate3d(0px, 0px, 5px)")
       .style("-webkit-transform", "translate3d(0px, 0px, 5px)")
 
+  }
+
+  var getLegendHTML = function (scale) {
+    var grades = scale.quantiles();
+    var labels = [], from, to;
+
+    for (var i = 0; i < grades.length; i++) {
+      from = d3.format(".2f")(grades[i]);
+      to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
+
+      labels.push(
+        '<li><span class="swatch" style="background:' + 
+        scale(grades[i]) + '"></span> ' +
+        from + (to ? '&ndash;' + to : '+') + '</li>');
+    }
+    return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
+  }
+
+  var onMapClick = function (d) {
+    d3.event.stopPropagation();
+    var curActive, newActive;
+    curActive = VIZ.activeMap;
+    newActive = scene.getObjectByName(d.elem);
+    newActive.newPos = VIZ.center;
+    if (curActive && curActive !== newActive) {
+      // SWITCH ONE ACTIVE MAP FOR ANOTHER
+      curActive.newPos = d[VIZ.state].position;
+      VIZ.transform(curActive, newActive);
+      VIZ.activeMap = newActive;
+    } else if (curActive && curActive === newActive) {
+      // RETURN ACTIVE MAP TO LAYOUT POSITION
+      delete curActive.newPos
+      VIZ.transform(curActive);
+      VIZ.activeMap = undefined;
+    } else {
+      // NO ACTIVE MAP - ZOOM CLICKED MAP
+      VIZ.transform(newActive);
+      VIZ.activeMap = newActive;
+    }
   }
 
   VIZ.drawMap = function (data, elemID) {
@@ -90,26 +159,10 @@
       onEachFeature: onEachFeature
     }).addTo(map);
     
-    map.legendControl.addLegend(getLegendHTML());
-
-    function getLegendHTML() {
-      var grades = scale.quantiles();
-      var labels = [], from, to;
-
-      for (var i = 0; i < grades.length; i++) {
-        from = d3.format(".2f")(grades[i]);
-        to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
-
-        labels.push(
-          '<li><span class="swatch" style="background:' + 
-          scale(grades[i]) + '"></span> ' +
-          from + (to ? '&ndash;' + to : '+') + '</li>');
-      }
-      return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
-    }
+    map.legendControl.addLegend(getLegendHTML(scale));
   }
 
-  function getStyleFun(scale, elemID) {
+  var getStyleFun = function (scale, elemID) {
     return function (feature) {
       var data = feature.properties.data;
       return {
@@ -123,23 +176,24 @@
     }
   }
 
-  function addToScene(d) {
+  var addToScene = function (d) {
     var object = new THREE.CSS3DObject(this);
     object.position = d.random.position;
     object.name = d.elem;
     scene.add(object);
   }
 
-  function setData(d, i) {
+  var setData = function (d, i) {
     var vector, phi, theta;
+    var random, sphere, grid;
 
-    var random = new THREE.Object3D();
+    random = new THREE.Object3D();
     random.position.x = Math.random() * 4000 - 2000;
     random.position.y = Math.random() * 4000 - 2000;
     random.position.z = Math.random() * 4000 - 2000;
     d['random'] = random;
 
-    var sphere = new THREE.Object3D();
+    sphere = new THREE.Object3D();
     phi = Math.acos( -1 + ( 2 * i ) / VIZ.count );
     theta = Math.sqrt( VIZ.count * Math.PI ) * phi;
     vector = new THREE.Vector3();
@@ -150,14 +204,14 @@
     sphere.lookAt( vector );
     d['sphere'] = sphere;
 
-    var grid = new THREE.Object3D();
+    grid = new THREE.Object3D();
     grid.position.x = (( i % 5 ) * 1050) - 2000;
     grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
     grid.position.z = 0;
     d['grid'] = grid;
   }
 
-  function getColor (data, elemID) {
+  var getColor = function (data, elemID) {
     var hex = '#000000';
     if (data === undefined) {
       return hex;
@@ -171,14 +225,14 @@
     }
   }
 
-  function onEachFeature(feature, layer) {
+  var onEachFeature = function (feature, layer) {
     layer.on({
         mouseover: mouseover,
         mouseout: mouseout
     });
   }
 
-  function mouseover(e) {
+  var mouseover = function (e) {
     var layer = e.target;
     layer.setStyle({
         weight: 2,
@@ -191,7 +245,7 @@
     }
   }
 
-  function mouseout(e) {
+  var mouseout = function (e) {
     var layer = e.target;
     layer.setStyle({
         weight: 1,
