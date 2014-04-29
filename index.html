@@ -16,7 +16,7 @@
     <div id="loading">
       <h5>Loading...</h5>
     </div>
-    <div id="container"></div>
+    <div id="container" style="opacity:0;"></div>
     <div id="menu"></div>
     <div id="icons">
       <img src="css/img/single.png">
@@ -54,6 +54,7 @@
         VIZ.drawMapBox(maps.filter(function (d, i) { return i < 10; }), data);
         VIZ.transform();
         d3.select("#loading").remove();
+        d3.select("#container").transition().duration(3000).style("opacity", 1);
         VIZ.render();
         VIZ.animate();
         window.addEventListener('resize', VIZ.onWindowResize, false);
