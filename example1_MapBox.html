@@ -7,7 +7,7 @@
     <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <title>delimited | Three.js Maps</title>
+    <title>delimited | Map Box and Three.js</title>
   </head>
   <body>
     <div id="intro">
@@ -16,7 +16,7 @@
     <div id="loading">
       <h5>Loading...</h5>
     </div>
-    <div id="container"></div>
+    <div id="container" style="opacity:0;"></div>
     <div id="menu"></div>
     <div id="icons">
       <img src="css/img/single.png">
@@ -28,10 +28,9 @@
     <script src="lib/CSS3DRenderer.js"></script>
     <script src="lib/TrackballControls.js"></script>
     <script src="lib/d3.min.js"></script>
-    <script src="js/viz.js"></script>
+    <script src="js/example1.js"></script>
     <script>
       d3.json("data/us-cdc.json", function (error, data) {
-
         var maps = [];
         var keys = data.features[0].properties.data;
 
@@ -43,21 +42,21 @@
         }
 
         d3.select("#menu").selectAll('button')
-          .data(['sphere', 'helix', 'grid']).enter()
+          .data(['sphere', 'grid']).enter()
           .append('button')
           .html(function (d) { return d; })
           .on('click', function (d) {
-            VIZ.state = d + "";
-            VIZ.transform(d); 
+            VIZ.state = d;
+            VIZ.transform(); 
           })
 
         VIZ.drawMapBox(maps.filter(function (d, i) { return i < 10; }), data);
-        VIZ.transform('grid');
+        VIZ.transform();
         d3.select("#loading").remove();
+        d3.select("#container").transition().duration(3000).style("opacity", 1);
         VIZ.render();
         VIZ.animate();
         window.addEventListener('resize', VIZ.onWindowResize, false);
-
       });
     </script>
   </body>
