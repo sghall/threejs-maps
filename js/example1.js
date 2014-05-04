@@ -14,55 +14,6 @@
   camera.position.z = 4500;
   camera.setLens(30);
 
- VIZ.drawD3Maps = function (mapList, data) {
-    // USED FOR SPHERE CALCS
-    VIZ.count = mapList.length;
-
-    var elements = d3.selectAll('.mapDiv')
-      .data(mapList).enter()
-      .append("svg")
-        .attr("class", "mapDiv")
-        .attr("id", function (d) { return d.elem; })
-        .each(function (d) {
-          VIZ.drawD3Map(data, d.elem);
-        })
-        .on("click", onMapClick);
-
-    elements.each(setData);
-    elements.each(addToScene);
-  }
-
-  VIZ.drawD3Map = function (data, elemID) {
-
-    var scale = d3.scale.quantile()
-      .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
-
-    var values = data.features.map(function (d) {
-     return d.properties.data[elemID].inc;
-    });
-
-    scale.domain(d3.extent(values.filter(function (d) {
-      return d >= 0;
-    })));
-
-    var map = L.mapbox.map(elemID)
-      .setView([37.8, -96], 4);
-
-    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
-      .addTo(map);
-
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-
-    var geoLayer = L.geoJson(data, {
-      style: getStyleFun(scale, elemID),
-      onEachFeature: onEachFeature
-    }).addTo(map);
-    
-    map.legendControl.addLegend(getLegendHTML(scale));
-  }
-
  VIZ.drawMapBox = function (mapList, data) {
     // USED FOR SPHERE CALCS
     VIZ.count = mapList.length;
