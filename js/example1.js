@@ -162,20 +162,6 @@
     d['grid'] = grid;
   }
 
-  var getColor = function (data, elemID) {
-    var hex = '#000000';
-    if (data === undefined) {
-      return hex;
-    } else {
-      data.forEach(function (item, i) {
-        if (item.name === year) {
-          hex = colors(item.children[0][relig]);
-        }
-      });
-      return hex;
-    }
-  }
-
   var onEachFeature = function (feature, layer) {
     layer.on({
         mouseover: mouseover,
