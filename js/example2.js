@@ -26,41 +26,17 @@
         .each(function (d) {
           VIZ.drawD3Map(data, d.elem);
         })
-        //.on("click", onMapClick);
 
     elements.each(setData);
     elements.each(addToScene);
-  }
-
-  var onMapClick = function (d) {
-    d3.event.stopPropagation();
-    var curActive, newActive;
-    curActive = VIZ.activeMap;
-    newActive = scene.getObjectByName(d.elem);
-    newActive.newPos = VIZ.center;
-    if (curActive && curActive !== newActive) {
-      // SWITCH ONE ACTIVE MAP FOR ANOTHER
-      curActive.newPos = d[VIZ.state].position;
-      VIZ.transform(curActive, newActive);
-      VIZ.activeMap = newActive;
-    } else if (curActive && curActive === newActive) {
-      // RETURN ACTIVE MAP TO LAYOUT POSITION
-      delete curActive.newPos
-      VIZ.transform(curActive);
-      VIZ.activeMap = undefined;
-    } else {
-      // NO ACTIVE MAP - ZOOM CLICKED MAP
-      VIZ.transform(newActive);
-      VIZ.activeMap = newActive;
-    }
   }
 
   VIZ.drawD3Map = function (data, elemID) {
     // var path = d3.geo.path();
 
     var projection = d3.geo.albersUsa()
-        .scale(1070)
-        .translate([1000 / 2, 600 / 2]);
+        .scale(1000)
+        .translate([800 / 2, 500 / 2]);
 
     var path = d3.geo.path()
         .projection(projection);

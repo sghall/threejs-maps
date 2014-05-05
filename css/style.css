@@ -53,10 +53,6 @@ button:active {
   background-color: rgba(48,103,145,.75);
 }
 
-path {
-  fill: tomato;
-}
-
 .map-legend .swatch {
   width:20px;
   height:20px;
@@ -87,6 +83,9 @@ path {
 }
 
 path {
+  fill: tomato;
+  stroke: black;
+  stroke-width: 1px;
   -webkit-backface-visibility:hidden;
   backface-visibility:hidden;  
 }
