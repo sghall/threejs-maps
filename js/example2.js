@@ -26,7 +26,7 @@
         .each(function (d) {
           VIZ.drawD3Map(data, d.elem);
         })
-        .on("click", onMapClick);
+        //.on("click", onMapClick);
 
     elements.each(setData);
     elements.each(addToScene);
@@ -55,7 +55,16 @@
     }
   }
 
-  VIZ.drawMap = function (data, elemID) {
+  VIZ.drawD3Map = function (data, elemID) {
+    // var path = d3.geo.path();
+
+    var projection = d3.geo.albersUsa()
+        .scale(1070)
+        .translate([1000 / 2, 600 / 2]);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
 
     var scale = d3.scale.quantile()
       .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
@@ -68,22 +77,12 @@
       return d >= 0;
     })));
 
-    var map = L.mapbox.map(elemID)
-      .setView([37.8, -96], 4);
+    console.log(data.features);
 
-    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
-      .addTo(map);
-
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-
-    var geoLayer = L.geoJson(data, {
-      style: getStyleFun(scale, elemID),
-      onEachFeature: onEachFeature
-    }).addTo(map);
-    
-    map.legendControl.addLegend(getLegendHTML(scale));
+    d3.select("#" + elemID).selectAll("path")
+      .data(data.features)
+     .enter().append("svg:path")
+       .attr("d", path);
   }
 
   var getStyleFun = function (scale, elemID) {
@@ -133,20 +132,6 @@
     grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
     grid.position.z = 0;
     d['grid'] = grid;
-  }
-
-  var getColor = function (data, elemID) {
-    var hex = '#000000';
-    if (data === undefined) {
-      return hex;
-    } else {
-      data.forEach(function (item, i) {
-        if (item.name === year) {
-          hex = colors(item.children[0][relig]);
-        }
-      });
-      return hex;
-    }
   }
 
   var onEachFeature = function (feature, layer) {
