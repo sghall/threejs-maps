@@ -68,8 +68,9 @@
       .data(data.features)
      .enter().append("svg:path")
        .attr("d", path)
-       .style("fill", function (d) { 
-        return scale(d.properties.data[elemID].inc)
+       .style("fill", function (d) {
+        var v = d.properties.data[elemID].inc;
+        return v < 0 ? 'grey': scale(v);
        })
        .on("mouseover", function (d) {
          d3.event.preventDefault();
