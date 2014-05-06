@@ -34,8 +34,6 @@
   }
 
   VIZ.drawD3Map = function (data, elemID) {
-    // var path = d3.geo.path();
-
     var projection = d3.geo.albersUsa()
         .scale(1000)
         .translate([800 / 2, 500 / 2]);
@@ -60,7 +58,8 @@
     d3.select("#" + elemID).selectAll("path")
       .data(data.features)
      .enter().append("svg:path")
-       .attr("d", path);
+       .attr("d", path)
+       .style("fill", function (d) { return scale(d.properties.data[elemID].inc)} )
   }
 
   var getStyleFun = function (scale, elemID) {
