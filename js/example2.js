@@ -19,15 +19,25 @@
         .attr("class", "map-div")
         .each(function (d) {
 
-          d3.select(this).append("text")
+          d3.select(this).append("div")
             .attr("class", "map-title")
-            .html("CDC MAP TITLE")
+            .html(function (d) { 
+              var text = " - 2010 Incidence Rates by State"
+              return d.title + text; 
+            });
+
+          d3.select(this).append("div")
+            .attr("class", "map-caption")
+            .html("2010 CDC Cancer Data");
+
+          d3.select(this).append("div")
+            .attr("class", function (d) { return d.elem + " map-rollover"; });
 
           d3.select(this).append("svg")
             .attr("class", "map-svg")
             .attr("width", svgWidth + "px")
             .attr("height", svgHeight + "px")
-            .attr("id", function (d) { return d.elem; })
+            .attr("id", function (d) { return d.elem; });
 
           VIZ.drawD3Map(data, d.elem);
         })
@@ -41,9 +51,8 @@
         .scale(800)
         .translate([svgWidth / 2, svgHeight / 2]);
 
-    var path = d3.geo.path()
-        .projection(projection);
-
+    var path = d3.geo.path().projection(projection);
+    var format = d3.format(".1f");
 
     var scale = d3.scale.quantile()
       .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
@@ -56,13 +65,26 @@
       return d >= 0;
     })));
 
-    console.log(data.features);
-
     d3.select("#" + elemID).selectAll("path")
       .data(data.features)
      .enter().append("svg:path")
        .attr("d", path)
-       .style("fill", function (d) { return scale(d.properties.data[elemID].inc)} )
+       .style("fill", function (d) { 
+        return scale(d.properties.data[elemID].inc)
+       })
+       .on("mouseover", function (d) {
+        d3.event.preventDefault();
+        var state = d.properties.name;
+        var irate = d.properties.data[elemID].inc;
+        var selector = "." + elemID + ".map-rollover";
+        d3.select(selector)
+          .html(state + " - " + (irate < 0 ? "No Data": format(irate)));
+       })
+       .on("mouseout", function (d) {
+          d3.event.preventDefault();
+          var selector = "." + elemID + ".map-rollover";
+          d3.select(selector).html("");
+        });
   }
 
   var addToScene = function (d) {
