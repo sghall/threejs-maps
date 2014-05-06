@@ -25,6 +25,10 @@ body { /* From https://github.com/Famous/core/blob/master/famous.css */
     overflow: hidden;
 }
 
+text {
+  fill: white;
+}
+
 a, p, h3, h6 {
   color: #000;
   background: transparent;
@@ -54,9 +58,9 @@ button:active {
 }
 
 .map-legend .swatch {
-  width:20px;
-  height:20px;
-  float:left;
+  position: absolute;
+  width:15px;
+  height:15px;
   margin-right:10px;
 }
 
@@ -66,6 +70,11 @@ button:active {
   -moz-padding-start: 5px;
   padding-start: 5px;
 }
+/*
+  -webkit-padding-start: 5px;
+  -moz-padding-start: 5px;
+  padding-start: 5px;
+}*/
 
 .map-div {
   position: absolute;
@@ -91,6 +100,15 @@ button:active {
   left: 10px;
   right: 0px;
   font-size: 40px;
+  color: rgba(255,255,255,0.75);
+}
+
+.map-div .map-legend {
+  position: absolute;
+  top: 200px;
+  left: 650px;
+  right: 0px;
+  font-size: 10px;
   color: rgba(255,255,255,0.75);
 }
 
