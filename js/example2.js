@@ -4,7 +4,6 @@
   var width = window.innerWidth, height = window.innerHeight;
   var svgWidth = 700, svgHeight = 400, format = d3.format(".1f");
 
-
   VIZ.state = 'grid', VIZ.activeMap;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
@@ -137,11 +136,16 @@
         from + (to ? '-' + to : '+'));
     }
 
-    var legend = d3.select("#" + elemID).selectAll(".legend")
+    var svg = d3.select("#" + elemID);
+
+    svg.append('text').text("Quartiles")
+      .attr("transform", "translate(645, 190)");
+
+    var legend = svg.selectAll(".legend")
         .data(grades)
       .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function (d, i) { return "translate(0," + ((i * 20) + 150) + ")"; });
+        .attr("transform", function (d, i) { return "translate(0," + ((i * 20) + 200) + ")"; });
 
     legend.append("rect")
         .attr("x", svgWidth - 10)
@@ -152,8 +156,8 @@
 
     legend.append("text")
         .attr("x", svgWidth - 12)
-        .attr("y", 6)
-        .attr("dy", ".35em")
+        .attr("y", 5)
+        .attr("dy", ".30em")
         .style("text-anchor", "end")
         .text(function (d, i) { return labels[i]; });
   }
