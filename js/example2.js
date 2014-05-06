@@ -2,11 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-
-  VIZ.center = new THREE.Object3D();
-  VIZ.center.position.x = 0;
-  VIZ.center.position.y = 0;
-  VIZ.center.position.z = 3700;
+  var svgWidth = 800, svgHeight = 400;
 
   VIZ.state = 'grid', VIZ.activeMap;
 
@@ -15,17 +11,24 @@
   camera.setLens(30);
 
  VIZ.drawD3Maps = function (mapList, data) {
-    // USED FOR SPHERE CALCS
     VIZ.count = mapList.length;
 
-    var elements = d3.selectAll('.mapDiv')
+    var elements = d3.selectAll('.map-div')
       .data(mapList).enter()
-      .append("svg")
-        .attr("height", "500px")
-        .attr("width", "800px")
-        .attr("class", "mapDiv")
-        .attr("id", function (d) { return d.elem; })
+      .append("div")
+        .attr("class", "map-div")
         .each(function (d) {
+
+          d3.select(this).append("text")
+            .attr("class", "map-title")
+            .html("CDC MAP TITLE")
+
+          d3.select(this).append("svg")
+            .attr("class", "map-svg")
+            .attr("width", svgWidth + "px")
+            .attr("height", svgHeight + "px")
+            .attr("id", function (d) { return d.elem; })
+
           VIZ.drawD3Map(data, d.elem);
         })
 
@@ -35,8 +38,8 @@
 
   VIZ.drawD3Map = function (data, elemID) {
     var projection = d3.geo.albersUsa()
-        .scale(1000)
-        .translate([800 / 2, 500 / 2]);
+        .scale(800)
+        .translate([svgWidth / 2, svgHeight / 2]);
 
     var path = d3.geo.path()
         .projection(projection);
@@ -60,20 +63,6 @@
      .enter().append("svg:path")
        .attr("d", path)
        .style("fill", function (d) { return scale(d.properties.data[elemID].inc)} )
-  }
-
-  var getStyleFun = function (scale, elemID) {
-    return function (feature) {
-      var data = feature.properties.data;
-      return {
-        fillColor: scale(data[elemID].inc),
-        weight: 1,
-        opacity: 1,
-        color: 'grey',
-        dashArray: '3',
-        fillOpacity: 0.6
-      };
-    }
   }
 
   var addToScene = function (d) {
@@ -109,40 +98,6 @@
     grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
     grid.position.z = 0;
     d['grid'] = grid;
-  }
-
-  var onEachFeature = function (feature, layer) {
-    layer.on({
-        mouseover: mouseover,
-        mouseout: mouseout
-    });
-  }
-
-  var mouseover = function (e) {
-    var layer = e.target;
-    layer.setStyle({
-        weight: 2,
-        color: 'tomato',
-        dashArray: '',
-        fillOpacity: 0.5
-    });
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
-  }
-
-  var mouseout = function (e) {
-    var layer = e.target;
-    layer.setStyle({
-        weight: 1,
-        opacity: 1,
-        color: 'grey',
-        dashArray: '3',
-        fillOpacity: 0.6
-    });
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
   }
 
   VIZ.render = function () {

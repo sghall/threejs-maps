@@ -10,7 +10,7 @@ html { /* From https://github.com/Famous/core/blob/master/famous.css */
 
 body { /* From https://github.com/Famous/core/blob/master/famous.css */
     width: 100%;
-    background-color: #000;
+    background-image:url('img/squared_metal.png');
     position: absolute;
     width: 100%;
     height: 100%;
@@ -67,19 +67,33 @@ button:active {
   padding-start: 5px;
 }
 
-.mapDiv {
-  /*  -webkit-backface-visibility:hidden; */
+.map-div {
+  position: absolute;
+  background-color: rgba(0,0,0,.75);
   border: 10px solid rgba(255,255,255,.75);
   border-radius: 6px;
-  position: absolute; 
-  top: 0; 
-  bottom: 0; 
   width: 800px;
   height: 500px;
 }
 
-.mapDiv.back {
-  background-color: grey;
+.map-div .map-title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 0px;
+  font-size: 30px;
+  color: rgba(255,255,255,0.75);
+}
+
+.map-div .map-svg {
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  right: 0px;
+}
+
+path:hover {
+  opacity: .6;
 }
 
 path {
