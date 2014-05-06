@@ -21,6 +21,8 @@
     var elements = d3.selectAll('.mapDiv')
       .data(mapList).enter()
       .append("svg")
+        .attr("height", "500px")
+        .attr("width", "800px")
         .attr("class", "mapDiv")
         .attr("id", function (d) { return d.elem; })
         .each(function (d) {
