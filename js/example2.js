@@ -2,7 +2,8 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-  var svgWidth = 800, svgHeight = 400;
+  var svgWidth = 700, svgHeight = 400, format = d3.format(".1f");
+
 
   VIZ.state = 'grid', VIZ.activeMap;
 
@@ -39,10 +40,10 @@
             .attr("height", svgHeight + "px")
             .attr("id", function (d) { return d.elem; });
 
-          VIZ.drawD3Map(data, d.elem);
+          VIZ.drawD3Map.call(this, data, d.elem);
         })
 
-    elements.each(setData);
+    elements.each(setPositionData);
     elements.each(addToScene);
   }
 
@@ -52,7 +53,6 @@
         .translate([svgWidth / 2, svgHeight / 2]);
 
     var path = d3.geo.path().projection(projection);
-    var format = d3.format(".1f");
 
     var scale = d3.scale.quantile()
       .range(["#e4baa2","#d79873","#c97645","#bc5316","#8d3f11"]);
@@ -73,18 +73,21 @@
         return scale(d.properties.data[elemID].inc)
        })
        .on("mouseover", function (d) {
-        d3.event.preventDefault();
-        var state = d.properties.name;
-        var irate = d.properties.data[elemID].inc;
-        var selector = "." + elemID + ".map-rollover";
-        d3.select(selector)
-          .html(state + " - " + (irate < 0 ? "No Data": format(irate)));
+         d3.event.preventDefault();
+         var state = d.properties.name;
+         var irate = d.properties.data[elemID].inc;
+         var selector = "." + elemID + ".map-rollover";
+         d3.select(selector)
+           .html(state + " - " + (irate < 0 ? "No Data": format(irate)));
        })
        .on("mouseout", function (d) {
           d3.event.preventDefault();
           var selector = "." + elemID + ".map-rollover";
           d3.select(selector).html("");
         });
+
+    console.log("this", this);
+    drawLegend(scale, elemID);
   }
 
   var addToScene = function (d) {
@@ -94,7 +97,7 @@
     scene.add(object);
   }
 
-  var setData = function (d, i) {
+  var setPositionData = function (d, i) {
     var vector, phi, theta;
     var random, sphere, grid;
 
@@ -120,6 +123,39 @@
     grid.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 650 ) + 800;
     grid.position.z = 0;
     d['grid'] = grid;
+  }
+
+  var drawLegend = function (scale, elemID) {
+    var grades = scale.quantiles();
+    var labels = [], from, to;
+
+    for (var i = 0; i < grades.length; i++) {
+      from = format(grades[i]);
+      to = grades[i + 1] ? format(grades[i + 1]): false;
+
+      labels.push(
+        from + (to ? '-' + to : '+'));
+    }
+
+    var legend = d3.select("#" + elemID).selectAll(".legend")
+        .data(grades)
+      .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d, i) { return "translate(0," + ((i * 20) + 150) + ")"; });
+
+    legend.append("rect")
+        .attr("x", svgWidth - 10)
+        .attr("width", 10)
+        .attr("height", 10)
+        .style("fill", function (d, i) { return scale(grades[i]); })
+        .style("stroke", "grey");
+
+    legend.append("text")
+        .attr("x", svgWidth - 12)
+        .attr("y", 6)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function (d, i) { return labels[i]; });
   }
 
   VIZ.render = function () {
