@@ -2,7 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-  var svgWidth = 700, svgHeight = 400, format = d3.format(".1f");
+  var svgWidth = 750, svgHeight = 400, format = d3.format(".1f");
 
   VIZ.state = 'grid';
 
@@ -139,7 +139,7 @@
     var svg = d3.select("#" + elemID);
 
     svg.append('text').text("Quantiles:")
-      .attr("transform", "translate(638, 190)");
+      .attr("transform", "translate(688, 190)");
 
     var legend = svg.selectAll(".legend")
         .data(grades)
