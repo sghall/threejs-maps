@@ -4,7 +4,7 @@
   var width = window.innerWidth, height = window.innerHeight;
   var svgWidth = 700, svgHeight = 400, format = d3.format(".1f");
 
-  VIZ.state = 'grid', VIZ.activeMap;
+  VIZ.state = 'grid';
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 4500;
@@ -31,7 +31,9 @@
             .html("2010 CDC Cancer Data");
 
           d3.select(this).append("div")
-            .attr("class", function (d) { return d.elem + " map-rollover"; });
+            .attr("class", function (d) { 
+              return d.elem + " map-rollover"; 
+            });
 
           d3.select(this).append("svg")
             .attr("class", "map-svg")
@@ -86,7 +88,6 @@
           d3.select(selector).html("");
         });
 
-    console.log("this", this);
     drawLegend(scale, elemID);
   }
 
@@ -126,27 +127,27 @@
   }
 
   var drawLegend = function (scale, elemID) {
-    var grades = scale.quantiles();
+    var grades = [0].concat(scale.quantiles());
     var labels = [], from, to;
 
     for (var i = 0; i < grades.length; i++) {
       from = format(grades[i]);
       to = grades[i + 1] ? format(grades[i + 1]): false;
-
-      labels.push(
-        from + (to ? '-' + to : '+'));
+      labels.push(from + (to ? '-' + to : '+'));
     }
 
     var svg = d3.select("#" + elemID);
 
-    svg.append('text').text("Quartiles")
-      .attr("transform", "translate(645, 190)");
+    svg.append('text').text("Quantiles:")
+      .attr("transform", "translate(638, 190)");
 
     var legend = svg.selectAll(".legend")
         .data(grades)
       .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function (d, i) { return "translate(0," + ((i * 20) + 200) + ")"; });
+        .attr("transform", function (d, i) { 
+          return "translate(0," + ((i * 20) + 200) + ")"; 
+        });
 
     legend.append("rect")
         .attr("x", svgWidth - 10)
