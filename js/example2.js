@@ -2,7 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-  var mapWidth = 750, mapHeight = 400, format = d3.format(".1f");
+  var mapWidth = 700, mapHeight = 400, format = d3.format(".1f");
 
   VIZ.state = 'grid';
 
@@ -36,7 +36,7 @@
             });
 
           d3.select(this).append("svg")
-            .attr("class", "map-svg")
+            .attr("class", "map-container")
             .attr("width", mapWidth + "px")
             .attr("height", mapHeight + "px")
             .attr("id", function (d) { return d.elem; });
@@ -51,7 +51,7 @@
   VIZ.drawD3Map = function (data, elemID) {
     var projection = d3.geo.albersUsa()
         .scale(800)
-        .translate([mapWidth / 2, mapHeight / 2]);
+        .translate([mapWidth - 380, mapHeight - 200]);
 
     var path = d3.geo.path().projection(projection);
 
@@ -139,7 +139,7 @@
     var svg = d3.select("#" + elemID);
 
     svg.append('text').text("Quantiles:")
-      .attr("transform", "translate(688, 190)");
+      .attr("transform", "translate(635, 190)");
 
     var legend = svg.selectAll(".legend")
         .data(grades)

@@ -71,11 +71,6 @@ button:active {
   -moz-padding-start: 5px;
   padding-start: 5px;
 }
-/*
-  -webkit-padding-start: 5px;
-  -moz-padding-start: 5px;
-  padding-start: 5px;
-}*/
 
 .map-div {
   position: absolute;
@@ -97,7 +92,7 @@ button:active {
 
 .map-div .map-caption {
   position: absolute;
-  top: 455px;
+  top: 450px;
   left: 10px;
   right: 0px;
   font-size: 40px;
@@ -125,7 +120,7 @@ button:active {
 .map-div .map-container {
   position: absolute;
   top: 50px;
-  left: 0px;
+  left: 50px;
   right: 0px;
 }
 

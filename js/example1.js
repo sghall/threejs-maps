@@ -2,7 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-  var mapWidth = 750, mapHeight = 400, format = d3.format(".1f");
+  var mapWidth = 700, mapHeight = 400, format = d3.format(".1f");
 
   VIZ.center = new THREE.Object3D();
   VIZ.center.position.x = 0;
@@ -42,6 +42,7 @@
 
           d3.select(this).append("div")
             .attr("class", "map-container")
+            .style("width", mapWidth + "px")
             .style("height", mapHeight + "px")
             .attr("id", function (d) { return d.elem; });
 
@@ -95,7 +96,7 @@
     var map = L.mapbox.map(elemID)
       .setView([37.8, -96], 4);
 
-    var tileLayer = L.mapbox.tileLayer('delimited.ho6391dg', {noWrap: true})
+    var tileLayer = L.mapbox.tileLayer('delimited.ge9h4ffl', {noWrap: true})
       .addTo(map);
 
     map.touchZoom.disable();
@@ -172,7 +173,7 @@
         weight: 2,
         color: 'tomato',
         dashArray: '',
-        fillOpacity: 0.5
+        fillOpacity: 0.6
     });
     if (!L.Browser.ie && !L.Browser.opera) {
         layer.bringToFront();
