@@ -50,7 +50,7 @@
             VIZ.transform(); 
           })
 
-        VIZ.drawMapBox(maps.filter(function (d, i) { return i < 10; }), data);
+        VIZ.drawMapBox(maps, data);
         VIZ.transform();
         d3.select("#loading").remove();
         d3.select("#container").transition().duration(3000).style("opacity", 1);

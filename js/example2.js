@@ -10,7 +10,7 @@
   camera.position.z = 4500;
   camera.setLens(30);
 
- VIZ.drawD3Maps = function (mapList, data) {
+ VIZ.drawElements = function (mapList, data) {
     VIZ.count = mapList.length;
 
     var elements = d3.selectAll('.map-div')
