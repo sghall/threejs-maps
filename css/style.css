@@ -10,7 +10,7 @@ html { /* From https://github.com/Famous/core/blob/master/famous.css */
 
 body { /* From https://github.com/Famous/core/blob/master/famous.css */
     width: 100%;
-    background-image:url('img/squared_metal.png');
+    background-image:url('img/dark_fish_skin.png');
     position: absolute;
     width: 100%;
     height: 100%;
@@ -30,7 +30,7 @@ text {
 }
 
 a, p, h3, h6 {
-  color: #000;
+  color: #fff;
   background: transparent;
 }
 
@@ -40,9 +40,10 @@ h5 {
 }
 
 button {
-  color: #fff;
-  background: transparent;
-  outline: 1px solid rgba(48,103,145,.75);
+  color: #333;
+  width: 100px;
+  background-color: #fff;
+  outline: 2px solid rgba(127,127,127,.75);
   border: 0px;
   padding: 5px 10px;
   cursor: pointer;
@@ -82,7 +83,7 @@ button:active {
   border: 10px solid rgba(255,255,255,.75);
   border-radius: 6px;
   width: 800px;
-  height: 540px;
+  height: 500px;
 }
 
 .map-div .map-title {
@@ -96,7 +97,7 @@ button:active {
 
 .map-div .map-caption {
   position: absolute;
-  top: 490px;
+  top: 455px;
   left: 10px;
   right: 0px;
   font-size: 40px;
@@ -114,7 +115,7 @@ button:active {
 
 .map-div .map-rollover {
   position: absolute;
-  top: 500px;
+  top: 450px;
   left: 500px;
   right: 0px;
   font-size: 25px;
