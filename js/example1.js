@@ -2,6 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
+  var mapWidth = 750, mapHeight = 400, format = d3.format(".1f");
 
   VIZ.center = new THREE.Object3D();
   VIZ.center.position.x = 0;
@@ -14,19 +15,38 @@
   camera.position.z = 4500;
   camera.setLens(30);
 
- VIZ.drawMapBox = function (mapList, data) {
-    // USED FOR SPHERE CALCS
+  VIZ.drawElements = function (mapList, data) {
     VIZ.count = mapList.length;
 
-    var elements = d3.selectAll('.mapDiv')
+    var elements = d3.selectAll('.map-div')
       .data(mapList).enter()
       .append("div")
-        .attr("class", "mapDiv")
-        .attr("id", function (d) { return d.elem; })
+        .attr("class", "map-div")
         .each(function (d) {
+
+          d3.select(this).append("div")
+            .attr("class", "map-title")
+            .html(function (d) { 
+              var text = " - 2010 Incidence Rates by State"
+              return d.title + text; 
+            });
+
+          d3.select(this).append("div")
+            .attr("class", "map-caption")
+            .html("2010 CDC Cancer Data");
+
+          d3.select(this).append("div")
+            .attr("class", function (d) { 
+              return d.elem + " map-rollover"; 
+            });
+
+          d3.select(this).append("div")
+            .attr("class", "map-container")
+            .style("height", mapHeight + "px")
+            .attr("id", function (d) { return d.elem; });
+
           VIZ.drawMap(data, d.elem);
         })
-        .on("click", onMapClick)
 
     elements.each(setData);
     elements.each(addToScene);
@@ -57,29 +77,6 @@
         from + (to ? '&ndash;' + to : '+') + '</li>');
     }
     return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
-  }
-
-  var onMapClick = function (d) {
-    d3.event.stopPropagation();
-    var curActive, newActive;
-    curActive = VIZ.activeMap;
-    newActive = scene.getObjectByName(d.elem);
-    newActive.newPos = VIZ.center;
-    if (curActive && curActive !== newActive) {
-      // SWITCH ONE ACTIVE MAP FOR ANOTHER
-      curActive.newPos = d[VIZ.state].position;
-      VIZ.transform(curActive, newActive);
-      VIZ.activeMap = newActive;
-    } else if (curActive && curActive === newActive) {
-      // RETURN ACTIVE MAP TO LAYOUT POSITION
-      delete curActive.newPos
-      VIZ.transform(curActive);
-      VIZ.activeMap = undefined;
-    } else {
-      // NO ACTIVE MAP - ZOOM CLICKED MAP
-      VIZ.transform(newActive);
-      VIZ.activeMap = newActive;
-    }
   }
 
   VIZ.drawMap = function (data, elemID) {

@@ -2,7 +2,7 @@
   var VIZ ={};
   var camera, renderer, controls, scene = new THREE.Scene();
   var width = window.innerWidth, height = window.innerHeight;
-  var svgWidth = 750, svgHeight = 400, format = d3.format(".1f");
+  var mapWidth = 750, mapHeight = 400, format = d3.format(".1f");
 
   VIZ.state = 'grid';
 
@@ -37,8 +37,8 @@
 
           d3.select(this).append("svg")
             .attr("class", "map-svg")
-            .attr("width", svgWidth + "px")
-            .attr("height", svgHeight + "px")
+            .attr("width", mapWidth + "px")
+            .attr("height", mapHeight + "px")
             .attr("id", function (d) { return d.elem; });
 
           VIZ.drawD3Map.call(this, data, d.elem);
@@ -51,7 +51,7 @@
   VIZ.drawD3Map = function (data, elemID) {
     var projection = d3.geo.albersUsa()
         .scale(800)
-        .translate([svgWidth / 2, svgHeight / 2]);
+        .translate([mapWidth / 2, mapHeight / 2]);
 
     var path = d3.geo.path().projection(projection);
 
@@ -150,14 +150,14 @@
         });
 
     legend.append("rect")
-        .attr("x", svgWidth - 10)
+        .attr("x", mapWidth - 10)
         .attr("width", 10)
         .attr("height", 10)
         .style("fill", function (d, i) { return scale(grades[i]); })
         .style("stroke", "grey");
 
     legend.append("text")
-        .attr("x", svgWidth - 12)
+        .attr("x", mapWidth - 12)
         .attr("y", 5)
         .attr("dy", ".30em")
         .style("text-anchor", "end")
