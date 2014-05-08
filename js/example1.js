@@ -4,11 +4,6 @@
   var width = window.innerWidth, height = window.innerHeight;
   var mapWidth = 700, mapHeight = 400, format = d3.format(".1f");
 
-  VIZ.center = new THREE.Object3D();
-  VIZ.center.position.x = 0;
-  VIZ.center.position.y = 0;
-  VIZ.center.position.z = 3700;
-
   VIZ.state = 'grid', VIZ.activeMap;
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
@@ -77,7 +72,7 @@
         scale(grades[i]) + '"></span> ' +
         from + (to ? '&ndash;' + to : '+') + '</li>');
     }
-    return '<span>Incidence Rate (Quartiles)</span><ul>' + labels.join('') + '</ul>';
+    return '<span>Quartiles:</span><ul>' + labels.join('') + '</ul>';
   }
 
   VIZ.drawMap = function (data, elemID) {
@@ -96,7 +91,7 @@
     var map = L.mapbox.map(elemID)
       .setView([37.8, -96], 4);
 
-    var tileLayer = L.mapbox.tileLayer('delimited.ge9h4ffl', {noWrap: true})
+    var tileLayer = L.mapbox.tileLayer('delimited.ge9h4ffl', {noWrap: false})
       .addTo(map);
 
     map.touchZoom.disable();
@@ -169,6 +164,14 @@
 
   var mouseover = function (e) {
     var layer = e.target;
+    var attrs = layer._map._container.__data__;
+    var state = e.target.feature.properties.name;
+    var irate = e.target.feature.properties.data[attrs.elem].inc;
+    var selector = "." + attrs.elem + ".map-rollover";
+
+    d3.select(selector)
+      .html(state + " - " + (irate < 0 ? "No Data": format(irate)));
+
     layer.setStyle({
         weight: 2,
         color: 'tomato',
@@ -182,6 +185,9 @@
 
   var mouseout = function (e) {
     var layer = e.target;
+    var attrs = layer._map._container.__data__;
+    var selector = "." + attrs.elem + ".map-rollover";
+    d3.select(selector).html("");
     layer.setStyle({
         weight: 1,
         opacity: 1,

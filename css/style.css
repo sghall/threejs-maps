@@ -29,6 +29,10 @@ text {
   fill: white;
 }
 
+path:hover {
+  opacity: .7;
+}
+
 a, p, h3, h6 {
   color: #fff;
   background: transparent;
@@ -58,20 +62,10 @@ button:active {
   background-color: rgba(48,103,145,.75);
 }
 
-.map-legend .swatch {
-  position: absolute;
-  width:15px;
-  height:15px;
-  margin-right:10px;
-}
-
-.map-legend ul {
-  list-style-type: none;
-  -webkit-padding-start: 5px;
-  -moz-padding-start: 5px;
-  padding-start: 5px;
-}
-
+/******************************************
+  map-div = main HTML (div) container
+  for both D3 and MapBox exmaples
+*******************************************/
 .map-div {
   position: absolute;
   background-color: rgba(0,0,0,.75);
@@ -99,24 +93,19 @@ button:active {
   color: rgba(255,255,255,0.75);
 }
 
-.map-div .map-legend {
-  position: absolute;
-  top: 200px;
-  left: 650px;
-  right: 0px;
-  font-size: 10px;
-  color: rgba(255,255,255,0.75);
-}
-
 .map-div .map-rollover {
   position: absolute;
-  top: 450px;
+  top: 455px;
   left: 500px;
   right: 0px;
   font-size: 25px;
   color: rgba(255,255,255,0.75);
 }
 
+/******************************************
+  map-container = SVG in D3
+  map-container = DIV in MapBox
+*******************************************/
 .map-div .map-container {
   position: absolute;
   top: 50px;
@@ -124,13 +113,22 @@ button:active {
   right: 0px;
 }
 
-path:hover {
-  opacity: .6;
+/******************************************
+  LEGEND CSS FOR MAPBOX ONLY
+  NOTE: D3 MAPS USE SVG LEGENDS
+*******************************************/
+.map-legend .swatch {
+  width:20px;
+  height:20px;
+  float:left;
+  margin-right:10px;
 }
 
-.leaflet-map-pane {
-  -webkit-backface-visibility:hidden;
-  backface-visibility:hidden;
+.map-legend ul {
+  list-style-type: none;
+  -webkit-padding-start: 5px;
+  -moz-padding-start: 5px;
+  padding-start: 5px;
 }
 
 #loading {
