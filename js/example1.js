@@ -60,7 +60,7 @@
   }
 
   var getLegendHTML = function (scale) {
-    var grades = scale.quantiles();
+    var grades = [0].concat(scale.quantiles());
     var labels = [], from, to;
 
     for (var i = 0; i < grades.length; i++) {
