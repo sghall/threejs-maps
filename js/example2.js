@@ -139,7 +139,7 @@
     var svg = d3.select("#" + elemID);
 
     svg.append('text').text("Quantiles:")
-      .attr("transform", "translate(635, 190)");
+      .attr("transform", "translate(625, 190)");
 
     var legend = svg.selectAll(".legend")
         .data(grades)
