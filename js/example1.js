@@ -4,7 +4,7 @@
   var width = window.innerWidth, height = window.innerHeight;
   var mapWidth = 700, mapHeight = 400, format = d3.format(".1f");
 
-  VIZ.state = 'grid', VIZ.activeMap;
+  VIZ.state = 'grid';
 
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 4500;
@@ -72,7 +72,7 @@
         scale(grades[i]) + '"></span> ' +
         from + (to ? '&ndash;' + to : '+') + '</li>');
     }
-    return '<span>Quartiles:</span><ul>' + labels.join('') + '</ul>';
+    return '<span>Quantiles:</span><ul>' + labels.join('') + '</ul>';
   }
 
   VIZ.drawMap = function (data, elemID) {
