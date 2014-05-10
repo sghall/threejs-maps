@@ -127,7 +127,7 @@
   }
 
   var drawLegend = function (scale, elemID) {
-    var grades = [0].concat(scale.quantiles());
+    var grades = [scale.domain()[0]].concat(scale.quantiles());
     var labels = [], from, to;
 
     for (var i = 0; i < grades.length; i++) {

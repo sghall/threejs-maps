@@ -60,7 +60,7 @@
   }
 
   var getLegendHTML = function (scale) {
-    var grades = [0].concat(scale.quantiles());
+    var grades = [scale.domain()[0]].concat(scale.quantiles());
     var labels = [], from, to;
 
     for (var i = 0; i < grades.length; i++) {
@@ -108,9 +108,9 @@
 
   var getStyleFun = function (scale, elemID) {
     return function (feature) {
-      var data = feature.properties.data;
+      var d = feature.properties.data[elemID].inc;
       return {
-        fillColor: scale(data[elemID].inc),
+        fillColor: d < 0 ? '#222': scale(d),
         weight: 1,
         opacity: 1,
         color: 'grey',
