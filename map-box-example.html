@@ -11,7 +11,7 @@
   </head>
   <body>
     <div id="intro">
-      <h2>Demo using MapBox with D3.js and Three.js</h2>
+      <h2>Demo | MapBox with D3.js and Three.js</h2>
     </div>
     <div id="loading">
       <h5 id="loading-text">Loading...</h5>
@@ -28,7 +28,7 @@
     <script src="lib/CSS3DRenderer.js"></script>
     <script src="lib/TrackballControls.js"></script>
     <script src="lib/d3.min.js"></script>
-    <script src="js/example1.js"></script>
+    <script src="js/map-box-example.js"></script>
     <script>
       d3.json("data/us-cdc.json", function (error, data) {
         var maps = [];
@@ -41,6 +41,9 @@
           });
         }
 
+        //**************************************
+        //  CREATE BUTTONS
+        //**************************************
         d3.select("#menu").selectAll('button')
           .data(['sphere', 'grid']).enter()
           .append('button')
@@ -50,10 +53,13 @@
             VIZ.transform(); 
           })
 
+        //**************************************
+        //  DRAW MAPS and ANIMATE
+        //**************************************
         VIZ.drawElements(maps, data);
         VIZ.transform();
-        d3.select("#loading").remove();
-        d3.select("#container").transition().duration(3000).style("opacity", 1);
+        d3.select("#loading").transition().duration(2500).style("opacity", 0);
+        d3.select("#container").transition().duration(3500).style("opacity", 1);
         VIZ.render();
         VIZ.animate();
         window.addEventListener('resize', VIZ.onWindowResize, false);
