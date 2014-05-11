@@ -28,13 +28,16 @@
     <script src="js/d3-map-example.js"></script>
     <script>
       d3.json("data/us-cdc.json", function (error, data) {
+        //**************************************
+        //  MAKE MAP LIST WITH TITLES
+        //**************************************
         var maps = [];
-        var keys = data.features[0].properties.data;
+        var cncr = data.features[0].properties.data;
 
-        for (var key in keys) {
+        for (var key in cncr) {
           maps.push({
             elem: key,
-            title: keys[key].title
+            title: cncr[key].title
           });
         }
 
