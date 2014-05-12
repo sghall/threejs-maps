@@ -4,8 +4,6 @@
   var width = window.innerWidth, height = window.innerHeight;
   var mapWidth = 700, mapHeight = 400, format = d3.format(".1f");
 
-  VIZ.state = 'grid';
-
   camera = new THREE.PerspectiveCamera(40, width/height , 1, 10000);
   camera.position.z = 4500;
   camera.setLens(30);
@@ -204,43 +202,29 @@
     renderer.render(scene, camera);
   }
 
-  VIZ.transform = function () {
-    var arr, duration = 1000;
-    if (arguments.length > 0) {
-      arr = Array.prototype.slice.call(arguments, 0);
-      controls.reset();
-    }else {
-      arr = scene.children;
-    }
+  VIZ.transform = function (layout) {
+    var duration = 1000;
 
     TWEEN.removeAll();
 
-    arr.forEach(function (object){
-      var newPos, newRot, coords, rotate, update;
+    scene.children.forEach(function (object){
+      var newPos = object.element.__data__[layout].position;
+      var coords = new TWEEN.Tween(object.position)
+            .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
 
-      if (object.newPos) {
-        newPos = object.newPos.position;
-        newRot = object.newPos.rotation;
-      } else {
-        newPos = object.element.__data__[VIZ.state].position;
-        newRot = object.element.__data__[VIZ.state].rotation;
-      }
-
-      coords = new TWEEN.Tween(object.position)
-        .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
-        .easing(TWEEN.Easing.Sinusoidal.InOut)
-        .start();
-
-      rotate = new TWEEN.Tween(object.rotation)
-        .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
-        .easing(TWEEN.Easing.Sinusoidal.InOut)
-        .start();
+      var newRot = object.element.__data__[layout].rotation;
+      var rotate = new TWEEN.Tween(object.rotation)
+            .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
     });
     
-   update = new TWEEN.Tween(this)
-     .to({}, duration)
-     .onUpdate(VIZ.render)
-     .start();
+   var update = new TWEEN.Tween(this)
+       .to({}, duration)
+       .onUpdate(VIZ.render)
+       .start();
   }
 
   VIZ.animate = function () {
