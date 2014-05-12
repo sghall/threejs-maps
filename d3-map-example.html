@@ -46,18 +46,15 @@
         //**************************************
         d3.select("#menu").selectAll('button')
           .data(['sphere', 'grid']).enter()
-          .append('button')
-          .html(function (d) { return d; })
-          .on('click', function (d) {
-            VIZ.state = d;
-            VIZ.transform(); 
-          })
+            .append('button')
+            .html(function (d) { return d; })
+            .on('click', function (d) { VIZ.transform(d); })
 
         //**************************************
         //  DRAW MAPS and ANIMATE
         //**************************************
         VIZ.drawElements(maps, data);
-        VIZ.transform();
+        VIZ.transform('grid');
         d3.select("#loading").transition().duration(2500).style("opacity", 0);
         d3.select("#container").transition().duration(3500).style("opacity", 1);
         VIZ.render();
