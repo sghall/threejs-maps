@@ -41,14 +41,14 @@
             .attr("height", mapHeight + "px")
             .attr("id", function (d) { return d.elem; });
 
-          VIZ.drawD3Map.call(this, data, d.elem);
+          VIZ.drawMap.call(this, data, d.elem);
         })
 
     elements.each(setPositionData);
     elements.each(addToScene);
   }
 
-  VIZ.drawD3Map = function (data, elemID) {
+  VIZ.drawMap = function (data, elemID) {
     var projection = d3.geo.albersUsa()
         .scale(800)
         .translate([mapWidth - 380, mapHeight - 200]);

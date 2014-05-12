@@ -1,4 +1,4 @@
 threejs-maps
 ============
 
-Under construction - Wouldn't use this
+Two map demos using d3.js and three.js.

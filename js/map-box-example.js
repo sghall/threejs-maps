@@ -59,22 +59,6 @@
 
   }
 
-  var getLegendHTML = function (scale) {
-    var grades = [scale.domain()[0]].concat(scale.quantiles());
-    var labels = [], from, to;
-
-    for (var i = 0; i < grades.length; i++) {
-      from = d3.format(".2f")(grades[i]);
-      to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
-
-      labels.push(
-        '<li><span class="swatch" style="background:' + 
-        scale(grades[i]) + '"></span> ' +
-        from + (to ? '&ndash;' + to : '+') + '</li>');
-    }
-    return '<span>Quantiles:</span><ul>' + labels.join('') + '</ul>';
-  }
-
   VIZ.drawMap = function (data, elemID) {
 
     var scale = d3.scale.quantile()
@@ -104,6 +88,22 @@
     }).addTo(map);
     
     map.legendControl.addLegend(getLegendHTML(scale));
+  }
+
+  var getLegendHTML = function (scale) {
+    var grades = [scale.domain()[0]].concat(scale.quantiles());
+    var labels = [], from, to;
+
+    for (var i = 0; i < grades.length; i++) {
+      from = d3.format(".2f")(grades[i]);
+      to = grades[i + 1] ? d3.format(".2f")(grades[i + 1]): false;
+
+      labels.push(
+        '<li><span class="swatch" style="background:' + 
+        scale(grades[i]) + '"></span> ' +
+        from + (to ? '&ndash;' + to : '+') + '</li>');
+    }
+    return '<span>Quantiles:</span><ul>' + labels.join('') + '</ul>';
   }
 
   var getStyleFun = function (scale, elemID) {
