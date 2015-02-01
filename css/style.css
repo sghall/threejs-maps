@@ -11,7 +11,7 @@ html { /* From https://github.com/Famous/core/blob/master/famous.css */
 body { /* From https://github.com/Famous/core/blob/master/famous.css */
     width: 100%;
     font-family: helvetica, arial, sans-serif;
-    background-image:url('img/dark_fish_skin.png');
+    background-color: #EAEAEA;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -27,7 +27,7 @@ body { /* From https://github.com/Famous/core/blob/master/famous.css */
 }
 
 text {
-  fill: white;
+  fill: #fff;
 }
 
 path:hover {
@@ -35,7 +35,7 @@ path:hover {
 }
 
 a, p, h2, h3, h4, h5, h6 {
-  color: #fff;
+  color: #333;
   background: transparent;
 }
 
@@ -65,8 +65,6 @@ button:active {
 .map-div {
   position: absolute;
   background-color: rgba(0,0,0,.75);
-  border: 10px solid rgba(255,255,255,.75);
-  border-radius: 6px;
   width: 800px;
   height: 500px;
 }
